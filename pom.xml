@@ -1,0 +1,7 @@
+<packaging>pom</packaging>
+
+<modules>
+  <module>sim.services</module>
+  <module>sim.parsing</module>
+  <module>sim.rise.ext</module>
+</modules>
