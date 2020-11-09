@@ -8,5 +8,8 @@ The Procfile, pom.xml, and system.properties in the root of this repository have
 
 The repository is configured to automatically deploy when new changes are merged into the master branch. 
 
-# TODO
+**Next steps:**
+
 Need to configure Heroku Postgres DB to be used with these services. Currently, they're still connected with Bruno's AWS db.
+
+Shouldn't be too difficult, as Heroku will pre-configure environment variables for us. We just need to modify the code so that it uses those environment variables as the DB host/port/user.
