@@ -30,7 +30,13 @@ import util.DbUtil;
 public class ResultsService {
 	
 	
-	
+	public String returnhello() throws IOException {
+		 Connection connection = ConnectionFactory.getConnection();
+			
+		
+	        
+	       return "it worked Jon!";
+	}
 	/*
 	 * Simulation Results -  Get & Delete
 	 */

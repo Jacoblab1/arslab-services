@@ -8,12 +8,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import services.ResultsService;
+
 @RestController
 public class TestController {
 
+	
+	private ResultsService service;
+	
 	@GetMapping(path="/Hello", produces = MediaType.APPLICATION_JSON_VALUE)  
 	public ResponseEntity<String> getAllAccounts() throws IOException  
-	{				
-		return ResponseEntity.status(HttpStatus.OK).body("Hello");
+	{		
+		service = new ResultsService();
+		String x = service.returnhello();
+		return ResponseEntity.status(HttpStatus.OK).body(x);
 	} 
 }  
