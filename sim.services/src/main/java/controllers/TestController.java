@@ -16,11 +16,11 @@ public class TestController {
 	
 	private ResultsService service;
 	
-	@GetMapping(path="/Hello", produces = MediaType.APPLICATION_JSON_VALUE)  
+	@GetMapping(path="/testConnection", produces = MediaType.APPLICATION_JSON_VALUE)  
 	public ResponseEntity<String> getAllAccounts() throws IOException  
 	{		
 		service = new ResultsService();
-		String x = service.returnhello();
-		return ResponseEntity.status(HttpStatus.OK).body(x);
+		String results = service.testConnection();
+		return ResponseEntity.status(HttpStatus.OK).body("Testing connection to data base: Trying to get current members: \n" + results);
 	} 
 }  

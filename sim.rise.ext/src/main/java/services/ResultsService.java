@@ -30,9 +30,33 @@ import util.DbUtil;
 public class ResultsService {
 	
 	
-	public String returnhello() throws IOException {
+	public String testConnection() throws IOException {
 		Connection connection = ConnectionFactory.getConnection();
-		return connection.toString();
+		 String returnThis = "";
+		 ResultSet results = null;
+	        try {
+	        	
+	            connection = ConnectionFactory.getConnection();
+	            String sql = "SELECT * from \"FourthYearProject\".\"Members\"";
+
+						
+				java.sql.Statement stmt = connection.createStatement();
+
+	            results = stmt.executeQuery(sql);
+	           
+	           
+	            while (results.next())
+	            {	
+	            	returnThis += results.getString("Fname") + " " + results.getString("Lname") + "\n";
+	            }
+	            
+	        } catch (SQLException e) {
+	            System.out.println("SQLException in get() method");
+	            e.printStackTrace();
+	        } finally {
+	            DbUtil.close(connection);
+	        }
+		return returnThis;
 	}
 	/*
 	 * Simulation Results -  Get & Delete
