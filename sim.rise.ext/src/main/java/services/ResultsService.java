@@ -31,11 +31,8 @@ public class ResultsService {
 	
 	
 	public String returnhello() throws IOException {
-		 Connection connection = ConnectionFactory.getConnection();
-			
-		
-	        
-	       return "it worked Jon!";
+		Connection connection = ConnectionFactory.getConnection();
+		return connection.toString();
 	}
 	/*
 	 * Simulation Results -  Get & Delete
