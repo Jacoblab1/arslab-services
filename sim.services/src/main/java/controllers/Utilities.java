@@ -1,4 +1,4 @@
-package components;
+package controllers;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import components.FilesMap;
 
 public class Utilities {
 	

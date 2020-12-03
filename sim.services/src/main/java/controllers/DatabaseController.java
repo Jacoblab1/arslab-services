@@ -30,7 +30,7 @@ public class DatabaseController {
 	public ResponseEntity<String> getAuthorAccount(@PathVariable String lastname,@PathVariable String firstname) throws IOException  
 	{		
 		service = new DatabaseService();
-		String results = service.getAuthorAccount(firstname,lastname);
+		String results = service.getAuthorAccount(lastname,firstname);
 		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + results);
 	}
 	

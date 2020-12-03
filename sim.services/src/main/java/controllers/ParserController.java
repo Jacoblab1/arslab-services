@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import components.CustomException;
 import components.FilesMap;
 import components.Helper;
-import components.Utilities;
 import models.simulation.Structure;
 import models.style.Style;
 import parsers.ILogParser;

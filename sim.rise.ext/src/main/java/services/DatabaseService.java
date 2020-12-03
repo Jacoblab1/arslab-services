@@ -77,6 +77,34 @@ public class DatabaseService {
 	        return returnThis;
 	}
 	
+	
+	public int addMemberAccount(String lname, String fname) throws IOException{
+		Connection connection = ConnectionFactory.getConnection();
+		ResultSet results = null;
+	        try {
+	            connection = ConnectionFactory.getConnection();
+	            
+	            String sql = "INSERT INTO \"FourthYearProject\".\"Members\" (fname, lname) VALUES(?, ?) RETURNING \"Members\".memberid;";
+	
+				PreparedStatement pstmt = connection.prepareStatement(sql);
+				pstmt.setString(1, fname);
+	            pstmt.setString(2, lname);
+	            
+	            results = pstmt.executeQuery();
+	            while (results.next()){	
+	            	return results.getInt("memberid");
+	            	
+	            }    
+	        } catch (SQLException e) {
+	            System.out.println("SQLException in addMemberAccount()");
+	            e.printStackTrace();
+	        } finally {
+	            DbUtil.close(connection);
+	        }
+	        return 0;
+	}
+	
+	
 	public String getAuthorProjects(String lname, String fname) throws IOException{
 		Connection connection = ConnectionFactory.getConnection();
 		String returnThis = "";
