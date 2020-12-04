@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import components.NewMember;
-import services.DatabaseService;
+import services.DatabaseSelectService;
 
 @Controller
 public class NewMemberController {
 
-	private DatabaseService service;
+	private DatabaseSelectService service;
 	
 	@GetMapping("/newMember")
 	public String greetingForm(Model model) {
@@ -29,7 +29,7 @@ public class NewMemberController {
 			model.addAttribute("newMember", newMember);
 			String firstname = newMember.getFirstname();
 			String lastname = newMember.getLastname();
-			service = new DatabaseService();
+			service = new DatabaseSelectService();
 			
 			int results = service.addMemberAccount(lastname,firstname);
 			newMember.setId(results);

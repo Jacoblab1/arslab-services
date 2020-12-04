@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import services.DatabaseService;
+import services.DatabaseSelectService;
 
 @RestController
 public class DatabaseController {
 
 	
-	private DatabaseService service;
+	private DatabaseSelectService service;
 	
 	@GetMapping(path="/testConnection", produces = MediaType.APPLICATION_JSON_VALUE)  
 	public ResponseEntity<String> getAllAccounts() throws IOException  
 	{		
-		service = new DatabaseService();
+		service = new DatabaseSelectService();
 		String results = service.testConnection();
 		return ResponseEntity.status(HttpStatus.OK).body("Testing connection to data base: Trying to get current members: \n" + results);
 	} 
@@ -29,16 +29,16 @@ public class DatabaseController {
 	@GetMapping(path="/get/author/{lastname}/{firstname}", produces = MediaType.APPLICATION_JSON_VALUE)  
 	public ResponseEntity<String> getAuthorAccount(@PathVariable String lastname,@PathVariable String firstname) throws IOException  
 	{		
-		service = new DatabaseService();
+		service = new DatabaseSelectService();
 		String results = service.getAuthorAccount(lastname,firstname);
 		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + results);
 	}
 	
-	@GetMapping(path="/get/author/projects/{lastname}/{firstname}", produces = MediaType.APPLICATION_JSON_VALUE)  
-	public ResponseEntity<String> getAuthorProjects(@PathVariable String lastname,@PathVariable String firstname) throws IOException  
+	@GetMapping(path="/get/author/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)  
+	public ResponseEntity<String> getAuthorProjects(@PathVariable int id) throws IOException  
 	{		
-		service = new DatabaseService();
-		String results = service.getAuthorProjects(lastname,firstname);
+		service = new DatabaseSelectService();
+		String results = service.getMembersProjects(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + results);
 	} 
 	
