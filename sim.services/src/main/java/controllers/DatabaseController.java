@@ -1,6 +1,9 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +44,27 @@ public class DatabaseController {
 		service = new DatabaseSelectService();
 		String results = service.getMembersProjects(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + results);
+	} 
+	
+	@GetMapping(path="/get/project/{id}", produces = MediaType.APPLICATION_JSON_VALUE)  
+	public ResponseEntity<String> getProject(@PathVariable int id) throws IOException  
+	{	
+		//System.out.println(id);
+		service = new DatabaseSelectService();
+		ArrayList results = service.getProject(id);
+		int count = 0;
+		String result = "";
+		for(int i = 0; i < results.size(); i++) {
+			HashMap<String,String> row = (HashMap) results.get(i);
+			result += "Row:" + count + "->";
+			
+			for(HashMap.Entry<String, String> r : row.entrySet()) {
+				result += " " + r.getKey() + ": " + r.getValue();
+			}
+			result += " \n";
+			count++;
+		}
+		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + result );
 	} 
 	
 	

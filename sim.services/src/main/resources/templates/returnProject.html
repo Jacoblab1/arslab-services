@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>Getting Started: Handling Form Submission</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>Result</h1>
+    <p th:text="'ProjectID: ' + ${getByIdObject.id}" />
+
+    <div th:each="map : ${getByIdObject.results}">
+        <div th:each="mapEntry : ${map}">
+            <span th:text="${mapEntry.key}"></span> = 
+            <span th:text="${mapEntry.value}"></span> 
+        </div>
+   </div>
+
+    <a href="/test/get/project">Display Another Projecy</a>
+</body>
+</html>
