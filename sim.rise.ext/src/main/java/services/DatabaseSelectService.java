@@ -89,7 +89,7 @@ public class DatabaseSelectService {
 	            		+ "	(select pm.projectid from \"FourthYearProject\".\"Members\" m inner join "
 	            		+ "		\"FourthYearProject\".\"Project_Members\" pm "
 	            		+ "		on pm.memberid = m.memberid "
-	            		+ "		where m.id = ? "
+	            		+ "		where m.memberid = ? "
 	            		+ "	) mp "
 	            		+ "	on p.projectid = mp.projectid";
 	

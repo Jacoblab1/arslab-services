@@ -36,7 +36,8 @@ public class DatabaseController {
 	
 	@GetMapping(path="/get/author/projects/{id}", produces = MediaType.APPLICATION_JSON_VALUE)  
 	public ResponseEntity<String> getAuthorProjects(@PathVariable int id) throws IOException  
-	{		
+	{	
+		System.out.println(id);
 		service = new DatabaseSelectService();
 		String results = service.getMembersProjects(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + results);
