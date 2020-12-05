@@ -24,7 +24,7 @@ public class DatabaseController {
 	public ResponseEntity<String> getAllAccounts() throws IOException  
 	{		
 		service = new DatabaseSelectService();
-		String results = service.testConnection();
+		ArrayList<HashMap<String, String>> results = service.testConnection();
 		return ResponseEntity.status(HttpStatus.OK).body("Testing connection to data base: Trying to get current members: \n" + results);
 	} 
 	
@@ -33,7 +33,7 @@ public class DatabaseController {
 	public ResponseEntity<String> getAuthorAccount(@PathVariable String lastname,@PathVariable String firstname) throws IOException  
 	{		
 		service = new DatabaseSelectService();
-		String results = service.getAuthorAccount(lastname,firstname);
+		ArrayList<HashMap<String, String>> results = service.getAuthorAccount(lastname, firstname);
 		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + results);
 	}
 	
@@ -42,7 +42,7 @@ public class DatabaseController {
 	{	
 		System.out.println(id);
 		service = new DatabaseSelectService();
-		String results = service.getMembersProjects(id);
+		ArrayList<HashMap<String, String>> results = service.getMembersProjects(id);
 		return ResponseEntity.status(HttpStatus.OK).body("Getting your results:\n" + results);
 	} 
 	
@@ -51,11 +51,11 @@ public class DatabaseController {
 	{	
 		//System.out.println(id);
 		service = new DatabaseSelectService();
-		ArrayList results = service.getProject(id);
+		ArrayList<HashMap<String,String>> results = service.getProject(id);
 		int count = 0;
 		String result = "";
 		for(int i = 0; i < results.size(); i++) {
-			HashMap<String,String> row = (HashMap) results.get(i);
+			HashMap<String,String> row = results.get(i);
 			result += "Row:" + count + "->";
 			
 			for(HashMap.Entry<String, String> r : row.entrySet()) {

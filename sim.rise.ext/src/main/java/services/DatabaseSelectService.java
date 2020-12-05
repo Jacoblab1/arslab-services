@@ -14,6 +14,7 @@ import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,612 +30,626 @@ import util.DbUtil;
 
 public class DatabaseSelectService {
 
-	public String testConnection() throws IOException {
+	private ArrayList<HashMap<String,String>> parseResults(ResultSet results) throws SQLException{
+		
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+        ResultSetMetaData rsmd = results.getMetaData();
+        int columnCount = rsmd.getColumnCount();
+        while (results.next()){	
+        	HashMap<String, String> row = new HashMap<String, String>();
+        	for(int i = 1; i <= columnCount; i++) {
+        		String column = rsmd.getColumnLabel(i);
+        		row.put(column,results.getString(column));
+            }
+        	resultsArray.add(row);	
+        }  
+        return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> testConnection() throws IOException {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            
-	            String sql = "SELECT * from \"FourthYearProject\".\"Members\"";	
-				java.sql.Statement stmt = connection.createStatement();
-	            
-				results = stmt.executeQuery(sql);
-	            while (results.next()){	
-	            	returnThis += results.getString("Fname") + " " + results.getString("Lname") + "\n";
-	            }
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in get() method");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return returnThis;
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT * from \"FourthYearProject\".\"Members\"";	
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		return resultsArray;
 	}
 	
 	//return a member by lastname and firstname
-	public String getAuthorAccount(String lname, String fname) throws IOException{
+	public ArrayList <HashMap<String,String>> getAuthorAccount(String lname, String fname) throws IOException{
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            
-	            String sql = "SELECT * FROM \"FourthYearProject\".\"Members\" where  lname = ? and fname= ?";
-	
-				PreparedStatement pstmt = connection.prepareStatement(sql);
-				pstmt.setString(1, lname);
-	            pstmt.setString(2, fname);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	returnThis += results.getString("memberid") + " " +  results.getString("fname") + " " + results.getString("lname") + "\n";
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in get() method");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-	        return returnThis;
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT * FROM \"FourthYearProject\".\"Members\" where  lname = ? and fname= ?";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, lname);
+	        pstmt.setString(2, fname);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		return resultsArray;
 	}
 	
 	// return projects of a member
-	public String getMembersProjects(int memberID) throws IOException{
+	public ArrayList <HashMap<String,String>> getMembersProjects(int memberID) throws IOException{
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            
-	            String sql = "select * from \"FourthYearProject\".\"Project\" p inner join "
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "select * from \"FourthYearProject\".\"Project\" p inner join "
 	            		+ "	(select pm.projectid from \"FourthYearProject\".\"Members\" m inner join "
 	            		+ "		\"FourthYearProject\".\"Project_Members\" pm "
 	            		+ "		on pm.memberid = m.memberid "
 	            		+ "		where m.memberid = ? "
 	            		+ "	) mp "
 	            		+ "	on p.projectid = mp.projectid";
-	
-				PreparedStatement pstmt = connection.prepareStatement(sql);
-				pstmt.setInt(1, memberID);
-	      
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	returnThis += "Project ID: " + results.getString("projectid")
-	            				+ " Project Name: " +  results.getString("projectname")
-	            				+ " Project Description: " + results.getString("projectdescription") 
-	            				+ " Creation Date: " + results.getString("creationdate") + " \n";
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in get() method");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-	        return returnThis;
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, memberID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		return resultsArray;
 	}
 	
 	//return a member by ID
-	public String getMember(int memberID){
+	public ArrayList <HashMap<String,String>> getMember(int memberID){
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
 		String sql = "SELECT memberid, fname, lname"
-					+ "FROM \"FourthYearProject\".\"Members\" m "
-					+ "where m.memberid = ?;";
-		PreparedStatement pstmt = connection.prepareStatement(sql);
-		pstmt.setInt(1, memberID);
-        
-        
-        results = pstmt.executeQuery();
-        while (results.next()){	
-        	return results.getString("memberid");
-        	
-        }    
-    } catch (SQLException e) {
-        System.out.println("SQLException in addMemberAccount()");
-        e.printStackTrace();
-    } finally {
-        DbUtil.close(connection);
-    }
-		return "return member by ID";
+					+ " FROM \"FourthYearProject\".\"Members\" m "
+					+ " where m.memberid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, memberID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		return resultsArray;
 	}
 	
 	//return a project - This will be the format of all the services
-	public ArrayList getProject(int projectID) {
+	public ArrayList<HashMap<String,String>> getProject(int projectID) {
 		Connection connection = ConnectionFactory.getConnection();
-		ArrayList<HashMap> resultsArray = new ArrayList<HashMap>();
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT projectid, projectname, projectdescription, creationdate"
-					+ " FROM \"FourthYearProject\".\"Project\" p "
-					+ " where p.projectid = ?;";	
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, projectID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	HashMap<String, String> row = new HashMap<String, String>();
-	            	row.put("projectid",results.getString("projectid"));
-	            	row.put("projectname",results.getString("projectname"));
-	            	row.put("projectdescription",results.getString("projectdescription"));
-	            	row.put("creationdate",results.getString("creationdate"));
-	            	resultsArray.add(row);	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return resultsArray;
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT projectid, projectname, projectdescription, creationdate"
+				+ " FROM \"FourthYearProject\".\"Project\" p "
+				+ " where p.projectid = ?;";	
+		
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, projectID);
+            resultsArray = parseResults(pstmt.executeQuery());
+        } catch (SQLException e) {
+            System.out.println("SQLException in getProject()");
+            e.printStackTrace();
+        } finally {
+            DbUtil.close(connection);
+        }
+        
+	    return resultsArray;
 	}
-/*
+
 	//return the members of a project
-	public String getProjectMembers(int modelID){
+	public ArrayList <HashMap<String,String>> getProjectMembers(int modelID){
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT m.memberid, m.fname, m.lname "
-					+ "FROM \"FourthYearProject\".\"Project_Members\" pm "
-					+ "inner join \"FourthYearProject\".\"Members\" m "
-					+ "on pm.memberid = m.memberid "
-					+ "inner join \"FourthYearProject\".\"Project\" p "
-					+ "on pm.projectid = p.projectid "
-					+ "where p.projectid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "members of a project";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT m.memberid, m.fname, m.lname "
+					+ " FROM \"FourthYearProject\".\"Project_Members\" pm "
+					+ " inner join \"FourthYearProject\".\"Members\" m "
+					+ " on pm.memberid = m.memberid "
+					+ " inner join \"FourthYearProject\".\"Project\" p "
+					+ " on pm.projectid = p.projectid "
+					+ " where p.projectid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 
 	//return a model
-	public String getModel(int modelID) {
+	public ArrayList <HashMap<String,String>> getModel(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT modelid, modelname, description, creationdate, modeltype, sourcelanguage "
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT modelid, modelname, description, creationdate, modeltype, sourcelanguage "
 					+ "FROM \"FourthYearProject\".\"Model\" "
 					+ "where modelid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return a model";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 	
 	//return a model's files
-	public String getModelFiles(int modelID) {
+	public ArrayList <HashMap<String,String>> getModelFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
-					+ "FROM \"FourthYearProject\".\"Model Files\" mf "
-					+ "inner join \"FourthYearProject\".\"Model\" m "
-					+ "on m.modelid = mf.modelid "
-					+ "where mf.modelid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+					+ " FROM \"FourthYearProject\".\"Model Files\" mf "
+					+ " inner join \"FourthYearProject\".\"Model\" m "
+					+ " on m.modelid = mf.modelid "
+					+ " where mf.modelid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
 		
-		return "return a model's files";
+		return resultsArray;
 	}
 
 	//return a model's source files
-	public String getModelSourceFiles(int modelID) {
+	public ArrayList <HashMap<String,String>> getModelSourceFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
-				+ "FROM \"FourthYearProject\".\"Model Files\" mf "
-				+ "inner join \"FourthYearProject\".\"Model\" m "
-				+ "on m.modelid = mf.modelid "
-				+ "inner join \"FourthYearProject\".\"Source Files\" sf "
-				+ "on mf.fileid = sf.fileid"
-				+ "where mf.modelid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return a model's source files";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
+				+ " inner join \"FourthYearProject\".\"Model\" m "
+				+ " on m.modelid = mf.modelid "
+				+ " inner join \"FourthYearProject\".\"Source Files\" sf "
+				+ " on mf.fileid = sf.fileid"
+				+ " where mf.modelid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 
 	//return a model's result files
-	public String getModelResultFiles(int modelID) {
+	public ArrayList <HashMap<String,String>> getModelResultFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
-				+ "FROM \"FourthYearProject\".\"Model Files\" mf "
-				+ "inner join \"FourthYearProject\".\"Model\" m "
-				+ "on m.modelid = mf.modelid "
-				+ "inner join \"FourthYearProject\".\"Original Results\" or2 "
-				+ "on mf.fileid = or2.fileid"
-				+ "where mf.modelid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return a model's result files";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
+				+ " inner join \"FourthYearProject\".\"Model\" m "
+				+ " on m.modelid = mf.modelid "
+				+ " inner join \"FourthYearProject\".\"Original Results\" or2 "
+				+ " on mf.fileid = or2.fileid"
+				+ " where mf.modelid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 
 	//return a model's converted files
-	public String getModelConvertedFiles(int modelID) {
+	public ArrayList <HashMap<String,String>> getModelConvertedFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
-				+ "FROM \"FourthYearProject\".\"Model Files\" mf "
-				+ "inner join \"FourthYearProject\".\"Model\" m "
-				+ "on m.modelid = mf.modelid "
-				+ "inner join \"FourthYearProject\".\"Converted Results\" "
-				+ "cr on mf.fileid = cr.fileid"
-				+ "where mf.modelid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return a model's converted files";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
+				+ " inner join \"FourthYearProject\".\"Model\" m "
+				+ " on m.modelid = mf.modelid "
+				+ " inner join \"FourthYearProject\".\"Converted Results\" "
+				+ " cr on mf.fileid = cr.fileid"
+				+ " where mf.modelid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 
 	//return a model file
-	public String getFile(int fileID){
+	public ArrayList <HashMap<String,String>> getFile(int fileID){
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT fileid, \"name\", \"type\", \"location\", created, description, author, modelid "
-				+ "FROM \"FourthYearProject\".\"Model Files\" mf "
-				+ "WHERE mf.fileid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, fileID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return a model file";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT fileid, \"name\", \"type\", \"location\", created, description, author, modelid "
+				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
+				+ " WHERE mf.fileid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, fileID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 	
 	//return the files written by a member
-	public String GetMembersFiles(int memberID) {
+	public ArrayList <HashMap<String,String>> getMembersFiles(int memberID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT m.memberid, m.fname, m.lname "
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT m.memberid, m.fname, m.lname "
 				+ " from \"FourthYearProject\".\"Model Files\" mf "
 				+ " inner join \"FourthYearProject\".\"Members\" m "
 				+ " on mf.author = m.memberid "
 				+ " where m.memberid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, memberID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "Get the files written by a member";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, memberID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 	
 	//return the authors of a file
-	public String GetFilesAuthors(int fileID) {
+	public ArrayList <HashMap<String,String>> getFilesAuthors(int fileID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
 				+ " from \"FourthYearProject\".\"Model Files\" mf "
 				+ " inner join \"FourthYearProject\".\"Members\" m "
 				+ " on mf.author = m.memberid "
 				+ " where mf.fileid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, fileID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return the authors of a file";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, fileID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 	
 	
 	
 	//return all models that a project has
-	public String getProjectsModel(int projectID) {
+	public ArrayList <HashMap<String,String>> getProjectsModel(int projectID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "select m.modelid, m.modelname, m.description, m.creationdate, m.modeltype, m.sourcelanguage"
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "select m.modelid, m.modelname, m.description, m.creationdate, m.modeltype, m.sourcelanguage"
 					+ " from \"FourthYearProject\".\"Project_Model\" pm "
 					+ " inner join \"FourthYearProject\".\"Model\" m  "
 					+ " on pm.model_id = m.modelid "
 					+ " inner join \"FourthYearProject\".\"Project\" p "
 					+ " on pm.project_id = p.projectid "
 					+ " where p.projectid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, projectID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, projectID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
 		
-		
-		return "return all models that a project has";
+		return resultsArray;
 	}
 	
 	//return all project a model is apart of
-	public String getModelsProjects(int modelID) {
+	public ArrayList <HashMap<String,String>> getModelsProjects(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT p.projectid, p.projectname, p.projectdescription, p.creationdate"
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT p.projectid, p.projectname, p.projectdescription, p.creationdate"
 					+ " from \"FourthYearProject\".\"Project_Model\" pm "
 					+ " inner join \"FourthYearProject\".\"Model\" m  "
 					+ " on pm.model_id = m.modelid "
 					+ " inner join \"FourthYearProject\".\"Project\" p "
 					+ " on pm.project_id = p.projectid "
 					+ " where m.modelid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
 		
-		return "return all project a model is apart of";
+		return resultsArray;
 	}
 	
 	//return a projects documentation file
-	public String getProjectsDocumentation(int projectid) {
+	public ArrayList <HashMap<String,String>> getProjectsDocumentation(int projectid) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT pd.\"documentID\", pd.\"name\", pd.\"type\", pd.\"location\", pd.created, pd.description, pd.author, pd.projectid "
-					+ "FROM \"FourthYearProject\".\"Project Documents\" pd "
-					+ "inner join \"FourthYearProject\".\"Project\" p "
-					+ "on pd.projectid = p.projectid "
-					+ "where p.projectid = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, projectid);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return a project documentation file";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT pd.\"documentID\", pd.\"name\", pd.\"type\", pd.\"location\", pd.created, pd.description, pd.author, pd.projectid "
+					+ " FROM \"FourthYearProject\".\"Project Documents\" pd "
+					+ " inner join \"FourthYearProject\".\"Project\" p "
+					+ " on pd.projectid = p.projectid "
+					+ " where p.projectid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, projectid);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 
 	// return a document file
-	public String getDocumentFile(int documentID) {
+	public ArrayList <HashMap<String,String>> getDocumentFile(int documentID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT pd.\"documentID\", pd.\"name\", pd.\"type\", pd.\"location\", pd.created, pd.description, pd.author, pd.projectid "
-					+ "FROM \"FourthYearProject\".\"Project Documents\" pd "
-					+ "where pd.\"documentID\" = ?;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, documentID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return a document file";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT pd.\"documentID\", pd.\"name\", pd.\"type\", pd.\"location\", pd.created, pd.description, pd.author, pd.projectid "
+					+ " FROM \"FourthYearProject\".\"Project Documents\" pd "
+					+ " where pd.\"documentID\" = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, documentID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 	
 	//return the members that wrote a file in a model
-	public String getMembersFromModel(int modelID) {
+	public ArrayList <HashMap<String,String>> getMembersFromModel(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "SELECT me.memberid, me.fname, me.lname"
-				+ " from \"FourthYearProject\".\"Model Files\" mf "
-				+ " inner join \"FourthYearProject\".\"Model\" mo "
-				+ " on mo.modelid = mf.modelid "
-				+ " inner join \"FourthYearProject\".\"Converted Results\" cr "
-				+ " on mf.fileid = cr.fileid "
-				+ " inner join \"FourthYearProject\".\"Members\" me "
-				+ " on mf.author = me.memberid "
-				+ " where mf.modelid = 60;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return the members that wrote a file in a model";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT DISTINCT me.memberid, me.fname, me.lname"
+					+ " from \"FourthYearProject\".\"Model Files\" mf "
+					+ " inner join \"FourthYearProject\".\"Model\" mo "
+					+ " on mo.modelid = mf.modelid "
+					+ " inner join \"FourthYearProject\".\"Converted Results\" cr "
+					+ " on mf.fileid = cr.fileid "
+					+ " inner join \"FourthYearProject\".\"Members\" me "
+					+ " on mf.author = me.memberid "
+					+ " where mf.modelid = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 
 	//return all children of a model
-	public String getModelChildren(int modelID){		
+	public ArrayList <HashMap<String,String>> getModelChildren(int modelID){		
 		Connection connection = ConnectionFactory.getConnection();
-		String returnThis = "";
-		ResultSet results = null;
-	        try {
-	            connection = ConnectionFactory.getConnection();
-	            String sql = "with recursive cte_model as ("
-		+ "	select m2.parentid, m2.childid, 1 lev  from \"FourthYearProject\".\"Model Children\" m2 "
-		+ "	where m2.parentid = 65"
-		+ "	union all"
-		+ "	select mc.parentid, mc.childid, cte_model.lev+1 lev from cte_model"
-		+ "	inner join \"FourthYearProject\".\"Model Children\" mc "
-		+ "	on mc.parentid = cte_model.childid\r\n"
-		+ ")"
-		+ " SELECT cte_model.parentid, pm.modelname parentName, cte_model.childid, cm.modelname childName, cte_model.lev as level"
-		+ " FROM cte_model"
-		+ " inner join \"FourthYearProject\".\"Model\" pm"
-		+ " on pm.modelid = cte_model.parentid"
-		+ " inner join \"FourthYearProject\".\"Model\" cm"
-		+ " on cm.modelid = cte_model.childid"
-		+ " ORDER BY lev ASC;";
-	            PreparedStatement pstmt = connection.prepareStatement(sql);
-	            pstmt.setInt(1, modelID);
-	            
-	            results = pstmt.executeQuery();
-	            while (results.next()){	
-	            	return results.getInt("memberid");
-	            	
-	            }    
-	        } catch (SQLException e) {
-	            System.out.println("SQLException in addMemberAccount()");
-	            e.printStackTrace();
-	        } finally {
-	            DbUtil.close(connection);
-	        }
-		return "return all children of a model";
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "with recursive cte_model as ("
+					+ "	select m2.parentid, m2.childid, 1 lev  from \"FourthYearProject\".\"Model Children\" m2 "
+					+ "	where m2.parentid = ?"
+					+ "	union all"
+					+ "	select mc.parentid, mc.childid, cte_model.lev+1 lev from cte_model"
+					+ "	inner join \"FourthYearProject\".\"Model Children\" mc "
+					+ "	on mc.parentid = cte_model.childid\r\n"
+					+ " )"
+					+ " SELECT cte_model.parentid, pm.modelname parentName, cte_model.childid, cm.modelname childName, cte_model.lev as level"
+					+ " FROM cte_model"
+					+ " inner join \"FourthYearProject\".\"Model\" pm"
+					+ " on pm.modelid = cte_model.parentid"
+					+ " inner join \"FourthYearProject\".\"Model\" cm"
+					+ " on cm.modelid = cte_model.childid"
+					+ " ORDER BY lev ASC;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, modelID);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
 	}
 	
+	public ArrayList <HashMap<String,String>> getAllConvertedResults(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT fileid, originalid, convertedid FROM \"FourthYearProject\".\"Converted Results\" order by convertedid;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllMembers(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT memberid, fname, lname FROM \"FourthYearProject\".\"Members\" order by memberid;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllModels(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT modelid, modelname, description, creationdate, modeltype, sourcelanguage FROM \"FourthYearProject\".\"Model\" order by modelid;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllModelFiles(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT fileid, \"name\", \"type\", \"location\", created, description, author, modelid FROM \"FourthYearProject\".\"Model Files\" order by fileid;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllOriginalResults(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT fileid, sourceid, originalid FROM \"FourthYearProject\".\"Original Results\" order by fileid;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllProjects(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT projectid, projectname, projectdescription, creationdate FROM \"FourthYearProject\".\"Project\" order by projectid;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllProjectDocuments(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT \"documentID\", \"name\", \"type\", \"location\", created, description, author, projectid FROM \"FourthYearProject\".\"Project Documents\" order by \"documentID\";";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllSourceFiles(){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT fileid, sourceid FROM \"FourthYearProject\".\"Source Files\" order by sourceid;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+
 	public int addMemberAccount(String lname, String fname) throws IOException{
 		Connection connection = ConnectionFactory.getConnection();
 		ResultSet results = null;
@@ -660,5 +675,5 @@ public class DatabaseSelectService {
 	        }
 	        return 0;
 	}
-	*/
+	
 }
