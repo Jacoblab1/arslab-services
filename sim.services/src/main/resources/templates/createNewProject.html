@@ -8,7 +8,7 @@
 <body>
 <h1>Form: Create A New Member</h1>
 <form action="#" th:action="@{/newProject}" th:object="${newProject}" method="post">
-    <p>Project ID: <input type="text" th:field="*{id}" /></p>
+    <p>Project ID: <input type="number" th:field="*{projectId}" /></p>
     <p>Project name: <input type="text" th:field="*{projectName}" /></p>
     <p>Project description: <input type="text" th:field="*{projectDescription}"></p>
     <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>

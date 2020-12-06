@@ -2,33 +2,33 @@ package components;
 
 public class NewProject {
 
-	private String projectid;
-	private String projectname;
-	private String projectdescription;
+	private String projectId;
+	private String projectName;
+	private String projectDescription;
 	private int id;
 
-	public String getProjectid() {
-		return projectid;
+	public String getProjectId() {
+		return projectId;
 	}
 
-	public void setProjectid(String projectid) {
-		this.projectid = projectid;
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
 	}
 
-	public String getProjectname() {
-		return projectname;
+	public String getProjectName() {
+		return projectName;
 	}
 
-	public void setProjectname(String projectname) {
-		this.projectname = projectname;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 
 	public String getProjectDescription() {
-		return projectdescription;
+		return projectDescription;
 	}
 
-	public void setProjectdescription(String projectdescription) {
-		this.projectdescription = projectdescription;
+	public void setProjectDescription(String projectDescription) {
+		this.projectDescription = projectDescription;
 	}
 	public int getId() {
 		return id;

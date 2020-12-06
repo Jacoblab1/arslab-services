@@ -91,15 +91,15 @@ public class FrontEndController {
 	@PostMapping("/newProject")
 	public String newObjectSubmit(@ModelAttribute NewProject newProject, Model model) throws IOException{
 		model.addAttribute("newProject", newProject);
-		String projectid = newProject.getProjectid();
-		String projectname = newProject.getProjectname();
+		String projectid = newProject.getProjectId();
+		String projectname = newProject.getProjectName();
 		String projectdescription = newProject.getProjectDescription();
 		service = new DatabaseSelectService();
 
 		//	int results = service.addMemberAccount(lastname,firstname);
 		//	newMember.setId(results);
 
-		return "returnNewProject";
+		return "newProject";
 	}
 
 }
