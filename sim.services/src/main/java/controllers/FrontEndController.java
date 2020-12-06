@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import components.NewMember;
 import components.GetByIdObject;
+import components.NewProject;
 import services.DatabaseSelectService;
 
 @Controller
@@ -80,6 +81,25 @@ public class FrontEndController {
 			
 			// return the name of the html file you want to return to..... html file has to be in resources/templates
 			return "returnProject";
+	}
+	@GetMapping("/newProject")
+	public String newObject(Model model) {
+		model.addAttribute("newProject", new NewProject());
+		return "createNewProject";
+	}
+
+	@PostMapping("/newProject")
+	public String newObjectSubmit(@ModelAttribute NewProject newProject, Model model) throws IOException{
+		model.addAttribute("newProject", newProject);
+		String projectid = newProject.getProjectid();
+		String projectname = newProject.getProjectname();
+		String projectdescription = newProject.getProjectDescription();
+		service = new DatabaseSelectService();
+
+		//	int results = service.addMemberAccount(lastname,firstname);
+		//	newMember.setId(results);
+
+		return "returnNewProject";
 	}
 
 }

@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Handling Form Submission</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h1>Result</h1>
+<p th:text="'Project ID: ' + ${newProject.projectid}" />
+<p th:text="'PRoject Name: ' + ${newProject.projectname}" />
+<p th:text="'Project Description: ' + ${newProject.projectdescription}" />
+<a href="/NewProject">Insert Another Project</a>
+</body>
+</html>
