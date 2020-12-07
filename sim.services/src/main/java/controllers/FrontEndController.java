@@ -54,7 +54,6 @@ public class FrontEndController {
 	@PostMapping("/test/get/project")
 	public String testGetProjectSubmit(@ModelAttribute GetByIdObject getByIdObject, Model model) throws IOException{
 			
-		
 			model.addAttribute("getProject", getByIdObject);
 			int id = getByIdObject.getId();
 			service = new DatabaseSelectService();
