@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>LocalHost:8080 Add Members to Project</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+
+
+<div th:replace="header :: header"></div>
+
+        
+<main>
+
+    <h1>Add Members to Project</h1>
+
+    <p> Current Members:
+        <ol>
+            <li th:each = "currentMembersMap : ${currentMembers}" th:text = "${currentMembersMap.get('fname')}  + ' ' + ${currentMembersMap.get('lname')} + ' (' + ${currentMembersMap.get('memberid')} + ')'"></li>
+        </ol>
+    </p>
+
+    
+    <p th:utext="${fileTitle}">Error No Project Selected </p>
+
+    <div  id="formHolder" th:if="${projectID}">
+        <form action="#" th:action="@{/insert/membersToProject}" th:object="${addMemberToProject}" method="post">
+            <div class = "formElement">
+                <label for="selectMember">Select A Member:</label>
+                <select name = "selectMember" th:field="*{memberId}">
+                    <option th:value = "-1" th:text = "'Add Member'" selected> </option>
+                    <option th:each="map : ${membersMap}" th:value = "${map.get('memberid')}" th:text = "${map.get('fname')}  + ' ' + ${map.get('lname')}"> </option>   
+                </select>
+            </div>
+            <input type="hidden" th:field="*{projectId}" th:value = "${addMemberToProject.projectId}">
+            <div class = "formTwoColumn">     
+                <input th:name="add" type="submit" value="Add" />
+                <input  type="submit" value="Add Models"/>
+            </div>  
+        </form>
+        
+            
+             
+    </div>
+
+
+     
+</main>
+</body>
+</html>
+

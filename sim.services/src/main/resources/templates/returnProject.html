@@ -1,12 +1,48 @@
 <!DOCTYPE HTML>
 <html xmlns:th="https://www.thymeleaf.org">
 <head> 
-    <title>Getting Started: Handling Form Submission</title>
+    <title>LocalHost:8080 Add Members to Project</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
 </head>
+
 <body>
-	<h1>Result</h1>
-    <p th:text="'ProjectID: ' + ${getByIdObject.id}" />
+
+
+<div th:replace="header :: header"></div>
+   
+<main>
+    <div class = groupTitle>
+        <h1 th:utext="${projectName}" ></h1>
+        <p> <em th:text="'Project ID:' + ${projectID}"></em></p>
+    </div>
+    
+    <p th:utext=" ${projectDescription}"> </p>
+
+    <h4>Project Members:</h4>
+
+    <ol>
+        <li th:each = "projectMembersMap : ${projectMembers}" >
+            <a href="#" th:text = "${projectMembersMap.get('fname')}  + ' ' + ${projectMembersMap.get('lname')} + ' (' + ${projectMembersMap.get('memberid')} + ')'"> </a>
+        </li>
+    </ol>
+
+    <h4>Project Models:</h4>
+
+    <ol>
+        <li th:each = "projectModelsMap : ${projectModels}" >
+            <a href="#" th:text = "${projectModelsMap.get('modelname')}  + ' (' + ${projectModelsMap.get('modelid')} + ')'"> </a>
+        </li>
+    </ol>
+
+    <p>Created <em th:text="${projectDate}"></em></p>
+
+    <!--
+        <select name = "selectMember" th:field="*{memberId}">
+        <option th:value = "-1" th:text = "'Add Member'" selected> </option>
+        <option th:each="map : ${membersMap}" th:value = "${map.get('memberid')}" th:text = "${map.get('fname')}  + ' ' + ${map.get('lname')}"> </option>   
+    </select>
+
 
     <div th:each="map : ${getByIdObject.results}">
         <div th:each="mapEntry : ${map}">
@@ -15,6 +51,8 @@
         </div>
    </div>
 
-    <a href="/test/get/project">Display Another Projecy</a>
+-->
+
+    <button> <a href="/get/project">Choose A Different Project</a> </button>
 </body>
 </html>

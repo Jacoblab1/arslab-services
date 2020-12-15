@@ -1,0 +1,170 @@
+.addToProjectForm{
+    position: absolute;
+    z-index: 1;
+    bottom: 0px;
+    left: 42px;
+}
+
+
+
+
+#simulationEverywhereLink{
+    color: #ffffff;
+    background-color: transparent;
+    box-sizing: border-box;
+    font-size: 1.25em;
+    font-family: Lato;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 1;
+    text-decoration: none;
+}
+
+#arsSlogan{
+    margin: 0;
+    font-style: italic;
+    letter-spacing: 1.8px;
+    font-size: 1.1em;
+    color: #c4c4c4;
+}
+
+#arsLabImage{
+    max-height: 203px;
+    max-width: 103px;
+    height: 203px;
+    width: 103px;
+    vertical-align: middle;
+    width: auto;
+    height: auto;
+}
+
+
+
+
+#imagelink{
+    position: relative;
+}
+
+#arsImageTextHolder{
+    position: absolute;
+    top: -82px;
+    left: -10px;
+}
+
+
+
+#blackBar{
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 10%;
+    padding-right: 15px;
+    height: 50px;
+    background-color: black;
+    color: white;
+    font-size: 13px;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+#headerContainer{
+    background-color: #a00000;
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 10%;
+    padding-right: 15px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    display: block;
+}
+
+#headerBody{
+    vertical-align: middle;
+    width: auto;
+    display: table-cell
+}
+
+#headerImage{
+    padding-right: 15px;
+    vertical-align: middle;
+    width: auto;
+    display: table-cell;
+    max-height: 106px;
+}
+
+header{
+    max-height: 286px;
+}
+
+#formHolder{
+    position: relative;
+}
+
+.formElement{
+  max-width: 300px; 
+  
+}
+
+form{
+
+}
+
+.formElement label{
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.formElement input, .formElement select{
+    width: 300px;
+    margin-bottom: 5px;
+}
+
+.formElement textarea{
+    width: 650px;
+    margin-bottom: 5px;
+}
+
+.formTwoColumn{
+    column-count: 2;
+    column-gap: 50px;
+    max-width: 650px;
+}
+
+#nextstep{
+    float:left; 
+    display:inline; 
+    width: 49%;
+}
+
+header a:visited {
+    color:#ffffff;
+}
+
+a{
+    text-decoration: none;
+    color: black;
+}
+
+
+
+
+body{
+    font-family: sans-serif;
+}
+
+main{
+    margin-left: 10%;
+    color: black;
+}
+
+.groupTitle p {
+    margin-top: 0px;
+    padding-top: 0px;
+    font-size: .75em;
+}
+
+.groupTitle h1{
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+

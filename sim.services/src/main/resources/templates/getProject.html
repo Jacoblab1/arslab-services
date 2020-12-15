@@ -1,13 +1,20 @@
 <!DOCTYPE HTML>
 <html xmlns:th="https://www.thymeleaf.org">
 <head> 
-    <title>Getting Started: Handling Form Submission</title>
+    <title>LocalHost:8080 Add Members to Project</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
 </head>
+
 <body>
+
+
+<div th:replace="header :: header"></div>
+   
+<main>
 	<h1>Form: Enter A Poject ID</h1>
-    <form action="#" th:action="@{/test/get/project}" th:object="${getByIdObject}" method="post">
-    	<p>id: <input type="number" th:field="*{id}" /></p>
+    <form action="#" th:action="@{/get/project}" th:object="${getByIdObject}" method="post">
+    	<p>Project ID: <input type="number" th:field="*{id}" /></p>
         <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
     </form>
 </body>
