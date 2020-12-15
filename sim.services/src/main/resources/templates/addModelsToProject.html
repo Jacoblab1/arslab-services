@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>LocalHost:8080 Add Members to Project</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
+    </head>
+<body>
+    <div th:replace="header :: header"></div>
+    <main>
+    <h1>Add Models to Project</h1>
+   
+    <p> Current Models:
+        <ol>
+            <li th:each = "currentModelsMap : ${currentModels}" th:text = "${currentModelsMap.get('modelname')}  + ' (' + ${currentModelsMap.get('modelid')} + ')'"></li>
+        </ol>
+    </p>
+
+    <p th:utext="${fileTitle}"> </p>
+
+    <div id="formHolder" th:if="${projectID}">
+            <form action="#" th:action="@{/insert/modelsToProject}" th:object="${addModelToProject}" method="post">
+                <div class = "formElement">
+                    <label for="selectModel">Select A Model:</label>
+                    <select name = "selectModel" th:field="*{modelId}">
+                        <option th:value = "-1" th:text = "'Select Model'" selected> </option>
+                        <option th:each="map : ${modelsMap}" th:value = "${map.get('modelid')}" th:text = "${map.get('modelname')}"> </option>   
+                    </select>
+                </div>
+                <input type="hidden" th:field="*{projectId}" th:value = "${addModelToProject.projectId}">
+                <input type="hidden" th:field="*{projectName}" th:value = "${addModelToProject.projectName}">
+                <div class = "formTwoColumn">     
+                    <input th:name="add" type="submit" value="Add" />
+                    <input  type="submit" value="View Project"/>
+                </div>  
+            </form>
+            
+    </div>
+    </main>
+</body>
+</html>
+

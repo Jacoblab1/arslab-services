@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import services.DatabaseSelectService;
 
 @RestController
-public class DatabaseController {
+public class DatabaseSelectController {
 
 	
 	private DatabaseSelectService service;

@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,7 +42,9 @@ public class DatabaseInsertServices {
 			pstmt.setInt(1, fileId);
 	        pstmt.setInt(2, originalId);
 	        ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+	        while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -64,7 +67,9 @@ public class DatabaseInsertServices {
 			pstmt.setString(1, firstname);
 			pstmt.setString(2, lastname);
 			ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+			while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -91,7 +96,9 @@ public class DatabaseInsertServices {
 			pstmt.setString(5, sourcelanguage);
 
 			ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+			while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -112,7 +119,7 @@ public class DatabaseInsertServices {
 			pstmt.setInt(2, childId);
 			pstmt.setInt(3, amount);
 
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -139,7 +146,9 @@ public class DatabaseInsertServices {
 			pstmt.setInt(6, author);
 			pstmt.setInt(7, modelid);
 			ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+			while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -161,7 +170,9 @@ public class DatabaseInsertServices {
 			pstmt.setInt(1, fileId);
 	        pstmt.setInt(2, sourceId);
 	        ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+	        while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -171,7 +182,7 @@ public class DatabaseInsertServices {
         return newid;
 	}
 	
-	public int insertProject(String projectName, String projectDescription, String creationDate){
+	public int insertProject(String projectName, String projectDescription, Date creationDate){
 		int newid = 0;
 		Connection connection = ConnectionFactory.getConnection(); 
 		String sql = "INSERT INTO \"FourthYearProject\".\"Project\""
@@ -182,9 +193,11 @@ public class DatabaseInsertServices {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, projectName);
 			pstmt.setString(2, projectDescription);
-			pstmt.setString(3, creationDate);
+			pstmt.setDate(3, creationDate);
 			ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+			while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -211,7 +224,9 @@ public class DatabaseInsertServices {
 			pstmt.setInt(6, author);
 			pstmt.setInt(7, projectId);
 			ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+			while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -230,7 +245,7 @@ public class DatabaseInsertServices {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, memberId);
 	        pstmt.setInt(2, projectId);
-			pstmt.executeQuery();
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -240,7 +255,7 @@ public class DatabaseInsertServices {
         return 0;
 	}
 	
-	public int insertProjectModel(int projectId, int modelID){
+	public int insertProjectModel(int projectId, int modelId){
 		Connection connection = ConnectionFactory.getConnection(); 
 		String sql = "INSERT INTO \"FourthYearProject\".\"Project_Model\""
 				+ " (project_id, model_id)"
@@ -248,8 +263,8 @@ public class DatabaseInsertServices {
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, projectId);
-	        pstmt.setInt(2, modelID);
-			pstmt.executeQuery();
+	        pstmt.setInt(2, modelId);
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();
@@ -270,7 +285,9 @@ public class DatabaseInsertServices {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, fileId);
 			ResultSet results = pstmt.executeQuery();
-	        newid = results.getInt(0);
+			while (results.next()){	
+				newid = results.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
 			e.printStackTrace();

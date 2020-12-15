@@ -1,0 +1,86 @@
+<html><head> 
+    <title>LocalHost:8080 Add Members to Project</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="/css/main.css" type="text/css" rel="stylesheet">
+</head>
+
+<body data-new-gr-c-s-check-loaded="14.987.0" data-gr-ext-installed="">
+
+
+<header>
+<div id="blackBar">
+
+</div>
+<div id="headerContainer">
+    <div class="headerLogo">
+            <div id="headerImage">
+                <div itemscope="" itemtype="https://schema.org/Brand">
+                    <a id="imagelink" href="https://arslab.sce.carleton.ca/" class="custom-logo-link" rel="home">
+                        
+                        <img id="arsImageTextHolder" width="200" height="103" src="/images/ARSLabText.png" class="custom-logo" alt="Simulation Everywhere ">
+                        
+                        <img id="arsImage" width="200" height="103" src="/images/arslab.png" class="custom-logo" alt="Simulation Everywhere ">
+                    </a>
+                </div>						
+            </div>
+            <div id="headerBody">
+                <p id="arsSlogan">Advanced Real-Time Simulation Laboratory</p>
+                <p id="simulationEverywhereLink"><a href="https://arslab.sce.carleton.ca/" rel="home">Simulation Everywhere </a></p>
+            </div>
+    </div>
+</div>
+<div id="blackBar">
+    <br>
+    Fourth Year Project
+</div>
+</header>
+
+        
+<main>
+
+    <h1>Add Members to Project</h1>
+    <p>Form: Add Members to '<em>hello</em>' (ProjectId:8)</p>
+
+    <p> Current Members:
+        </p><ol>
+            <li>Jacob Laboissonniere (3)</li>
+            <li>Paul Roode (4)</li>
+            <li>Change Qui (5)</li>
+            <li>Jon Menard (1)</li>
+        </ol>
+    <p></p>
+
+
+    <div id="formHolder">
+        <form action="/test/insert/membersToProject" method="post">
+            <div class="formElement">
+                <label for="selectMember">Select A Member:</label>
+                <select name="memberId" id="memberId">
+                    <option value="-1">[Empty]</option>
+                    <option value="2">Bruno St-Aubin</option>
+                    <option value="7">John Doe</option>
+                    <option value="8">Gary Rodgers</option>
+                    <option value="6">John Smith</option>
+                    <option value="10">Fred Brown</option>
+                    <option value="9">Pablo Green</option>   
+                </select>
+            </div>
+            <input type="hidden" value="8" id="projectId" name="projectId">
+            <input type="hidden" value="hello" id="projectName" name="projectName">
+            <div class="formElement">      
+                <input type="submit" value="Add">
+            </div>  
+        </form>
+            
+             
+    </div>
+
+
+    <form class="addToProjectForm" action="/test/insert/modelsToProject/8/hello" method="get">
+        <input type="submit" value="Next Step">
+    </form>  
+</main>
+
+
+
+</body></html>

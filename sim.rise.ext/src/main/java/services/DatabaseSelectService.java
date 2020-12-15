@@ -113,7 +113,7 @@ public class DatabaseSelectService {
 	}
 
 	//return the members of a project
-	public ArrayList <HashMap<String,String>> getProjectMembers(int modelID){
+	public ArrayList <HashMap<String,String>> getProjectMembers(int projectId){
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
 		String sql = "SELECT m.memberid, m.fname, m.lname "
@@ -125,7 +125,7 @@ public class DatabaseSelectService {
 					+ " where p.projectid = ?;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, modelID);
+			pstmt.setInt(1, projectId);
 			resultsArray = parseResults(pstmt.executeQuery());
 		} catch (SQLException e) {
 			System.out.println("SQLException in getProject()");
@@ -498,7 +498,7 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getAllMembers(){		
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT memberid, fname, lname FROM \"FourthYearProject\".\"Members\" order by memberid;";
+		String sql = "SELECT memberid, fname, lname FROM \"FourthYearProject\".\"Members\" order by fname, lname;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			resultsArray = parseResults(pstmt.executeQuery());
@@ -613,6 +613,62 @@ public class DatabaseSelectService {
 		
 		return resultsArray;
 	}
+	
+	public ArrayList <HashMap<String,String>> getAllMembersNotInProject(int projectId){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "select m.memberid, m.fname, m.lname "
+				+ " from \"FourthYearProject\".\"Members\" m "
+				+ " where m.memberid not in( "
+				+ "	select m.memberid "
+				+ "	from \"FourthYearProject\".\"Members\" m "
+				+ "	inner join \"FourthYearProject\".\"Project_Members\" pm "
+				+ "	on m.memberid = pm.memberid "
+				+ "	where pm.projectid = ? "
+				+ ")";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, projectId);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	public ArrayList <HashMap<String,String>> getAllModelsNotInProject(int projectId){		
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "select m.modelid, m.modelname, m.description, m.creationdate, m.modeltype, m.sourcelanguage "
+				+ " from \"FourthYearProject\".\"Model\" m  "
+				+ " where m.modelid not in( "
+				+ "	select m.modelid  "
+				+ "	from \"FourthYearProject\".\"Model\" m "
+				+ "	inner join \"FourthYearProject\".\"Project_Model\" pm "
+				+ "	on  m.modelid = pm.model_id  "
+				+ "	where pm.project_id = ? "
+				+ ")";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, projectId);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
+	
+	
+	
+	
 
 	public int addMemberAccount(String lname, String fname) throws IOException{
 		Connection connection = ConnectionFactory.getConnection();

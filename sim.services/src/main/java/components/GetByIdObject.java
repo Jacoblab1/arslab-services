@@ -7,7 +7,7 @@ public class GetByIdObject {
 	
 	
 	private int id;
-	private ArrayList<HashMap> results;
+	private ArrayList<HashMap<String,String>> results;
 
 	public int getId() {
 		return id;
@@ -17,11 +17,11 @@ public class GetByIdObject {
 		this.id = id;
 	}
 	
-	public ArrayList<HashMap> getResults() {
+	public ArrayList<HashMap<String,String>> getResults() {
 		return results;
 	}
 
-	public void setResults(ArrayList<HashMap> results) {
+	public void setResults(ArrayList<HashMap<String,String>> results) {
 		this.results = results;
 	}
 }
