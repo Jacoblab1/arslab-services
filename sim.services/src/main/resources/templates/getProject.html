@@ -12,10 +12,30 @@
 <div th:replace="header :: header"></div>
    
 <main>
-	<h1>Form: Enter A Poject ID</h1>
-    <form action="#" th:action="@{/get/project}" th:object="${getByIdObject}" method="post">
-    	<p>Project ID: <input type="number" th:field="*{id}" /></p>
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-    </form>
+    <div class = groupTitle>
+        <h1 th:utext="${projectName}" ></h1>
+        <p> <em th:text="'Project ID:' + ${projectID}"></em></p>
+    </div>
+    
+    <p th:utext=" ${projectDescription}"> </p>
+
+    <h4>Project Members:</h4>
+
+    <ol>
+        <li th:each = "projectMembersMap : ${projectMembers}" >
+            <a href="#" th:text = "${projectMembersMap.get('fname')}  + ' ' + ${projectMembersMap.get('lname')} + ' (' + ${projectMembersMap.get('memberid')} + ')'"> </a>
+        </li>
+    </ol>
+
+    <h4>Project Models:</h4>
+
+    <ol>
+        <li th:each = "projectModelsMap : ${projectModels}" >
+            <a th:href="@{/get/model/{id}(id=${projectModelsMap.get('modelid')})}" th:text = "${projectModelsMap.get('modelname')}  + ' (' + ${projectModelsMap.get('modelid')} + ')'"> </a>
+        </li>
+    </ol>
+
+    <p>Created <em th:text="${projectDate}"></em></p>
+    <button> <a href="/get/projects">Choose A Different Project</a> </button>
 </body>
 </html>

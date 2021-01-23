@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>LocalHost:8080 Add Members to Project</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+
+
+<div th:replace="header :: header"></div>
+   
+<main>
+	<h1>Select a Model To Discover</h1>
+    <form action="#" th:action="@{/get/models}" th:object="${getByIdObject}" method="post">       
+        <div class = "formElement">
+            <label for="selectModel">Select A Model:</label>
+            <select name = "selectModel" th:field="*{id}">
+                <option th:value = "-1" th:text = "'Select Model'" selected> </option>
+                <option th:each="map : ${modelsArrayList}" th:value = "${map.get('modelid')}" th:text = "${map.get('modelname')}"> </option>   
+            </select>
+        </div>
+        <div class = "formTwoColumn">     
+            
+            <input th:name="submit" type="submit" value="View Model"/>
+            Or 
+            <input  name="add"  type="submit" value="View All Projects"/>
+        </div>  
+    </form>
+</body>
+</html>

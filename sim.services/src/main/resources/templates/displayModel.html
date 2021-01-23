@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>Display Model</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div th:replace="header :: header"></div>
+   
+    <main>
+        <div class = groupTitle>
+            <h1 th:utext="${modelName}" ></h1>
+            <p> <em th:text="'Model ID:' + ${modelID}"></em></p>
+        </div>
+        <div class = "itemInformation">
+            
+            <div class = "itemDescription">
+                <h4>About this Model:</h4>
+                <p th:utext=" ${modelDescription}"> </p>
+                <p>
+                    Inputs: <em>n/a</em><br>
+                    Outputs: <em>n/a</em><br>
+                    Model Type: <em th:text="${modelType}"></em><br>
+                    Source Language: <em th:text="${sourceLanguage}"></em>
+                </p>
+                <p>Created: <em th:text="${modelDate}"></em></p>
+            </div>
+
+            <div class = "itemAuthors">
+                <h4>Model Authors:</h4>
+                <ol>
+                    <li th:each = "modelMembersMap : ${modelAuthors}" >
+                        <a href="#" th:text = "${modelMembersMap.get('fname')}  + ' ' + ${modelMembersMap.get('lname')} + ' (' + ${modelMembersMap.get('memberid')} + ')'"> </a>
+                    </li>
+                </ol>
+            </div>
+            
+            
+
+            <h4>Projects containg this Model:</h4>
+
+            <ol>
+                <li th:each = "projectModelsMap : ${modelProject}" >
+                    <a th:href="@{/get/project/{id}(id=${projectModelsMap.get('projectid')})}" th:text = "${projectModelsMap.get('projectname')}  + ' (' + ${projectModelsMap.get('projectid')} + ')'"> </a>
+                </li>
+            </ol>
+
+            <h4>Models Composite Structure:</h4>
+            <ul id = "modelChildren"></ul>
+            <button> <a href="/get/models">Select A Different Model</a> </button>
+            
+
+
+
+
+
+            <script th:inline="javascript">
+                let modelId = [[${modelID}]];
+                let modelChildrenMap =  [[${modelChildrenMap}]];
+                let modelSubModels = [[${modelSubModels}]];
+                let modelName = [[${modelName}]]
+                let string = recursiveParentChildPrint(modelChildrenMap, modelChildrenMap[modelId],0,modelSubModels);
+                document.getElementById("modelChildren").innerHTML = "<li> <strong>" + modelName + "</strong><ul>" + string + "</ul> </li>";
+
+                function recursiveParentChildPrint(modelChildrenMap,parent,level,modelSubModels){
+                    let listContents = "";
+                    for(let i = 0; i < parent.length; i++) {
+                        let childId = parent[i];
+                        let childsChildren = modelChildrenMap[childId];
+                        
+                        listContents += "<li> <a href=\"/get/model/" + modelSubModels[childId]["modelid"] + "\">" + modelSubModels[childId]["modelname"] + "</a> </li>";
+                        
+                        if(childsChildren != undefined) {
+                            listContents += "<ul>" + recursiveParentChildPrint(modelChildrenMap,childsChildren, level + 1,modelSubModels)  + "</ul>";
+                        }
+                    }
+                    return listContents;
+                }
+
+
+            </script>
+        </div>
+    </main>   
+    
+        
+</body>
+</html>

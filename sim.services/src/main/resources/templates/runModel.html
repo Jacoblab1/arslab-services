@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head> 
+    <title>LocalHost:8080 Add Members to Project</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link  href = "../static/css/main.css" th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
+    </head>
+<body>
+    <div th:replace="header :: header"></div>
+    <main>
+        <h1>Run a simulation</h1>
+        
+
+
+        <form action="#" th:action="@{/run/simulation}" th:object="${runSimulation}" method="post">
+                <div class = "formElement">
+                    <label for="simulation">Simulation:</label>
+                    <select name = "simulation" th:field="*{model}">
+                        <option th:value = "-1" th:text = "'Select simulation'" selected> </option>
+                        <option th:each="map : ${models}" th:value = "${map.get('modelid')}" th:text = "${map.get('modelname')}"> </option>   
+                    </select>
+                    <label for="simulationtype">Simulation Type:</label>
+                    <select name = "simulationtype" th:field="*{model}">
+                        <option th:value = "-1" th:text = "'Select simulation'" selected> </option>
+                        <option th:each="map : ${modelsSimulations}" th:value = "${map.get('fileid')}" th:text = "${map.get('name')}"> </option>   
+                    </select>
+                    <label for="inputFile">Input File to Edit</label>
+                    <select name = "inputFile">
+                        <option th:value = "-1" th:text = "'Select simulation'" selected> </option>
+                        <option th:each="map : ${modelsSimulations}" th:value = "${map.get('fileid')}" th:text = "${map.get('name')}"> </option>   
+                    </select>
+                    <div class = "formElement">
+                        <label for="projectDescription">Project Description:</label>
+                        <textarea name = "projectDescription" type="text" rows="20" ></textarea>
+                    </div>
+                </div>
+            <div class = "formTwoColumn">
+                <input type="submit" value="Submit" /> 
+                <input type="reset" value="Reset" />
+            </div>
+        </form>
+    </main>
+</body>
+</html>

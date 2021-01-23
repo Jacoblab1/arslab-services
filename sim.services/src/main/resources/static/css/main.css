@@ -14,10 +14,9 @@
     box-sizing: border-box;
     font-size: 1.25em;
     font-family: Lato;
-    font-weight: 800;
-    text-transform: uppercase;
     line-height: 1;
     text-decoration: none;
+    font-style: italic;
 }
 
 #arsSlogan{
