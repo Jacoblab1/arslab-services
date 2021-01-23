@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import components.NewMember;
+import components.runSimulationModel;
 import components.AddMemberToProject;
 import components.AddModelToProject;
 import components.GetByIdObject;
@@ -26,6 +29,9 @@ import components.InsertNewProject;
 import services.DatabaseInsertServices;
 import services.DatabaseSelectService;
 import controllers.DatabaseSelectController;
+import sun.tools.jar.CommandLine;
+
+
 
 
 @Controller
@@ -53,12 +59,14 @@ public class FrontEndController {
 	}
 	
 	// this wil be the inital function called when loading the page
-	@GetMapping("/get/project")
+	@GetMapping("/get/projects")
 	public String testGetProject(Model model) {
 		// the name here will be its name in the html docutment ${"GetByIdObject"}
+		ArrayList<HashMap<String, String>> projects = service.getAllProjects();
 		model.addAttribute("getByIdObject", new GetByIdObject());
+		model.addAttribute("projectsArrayList", projects);
 	// return the html page that contains to form 	..... html file has to be in resources/templates
-		return "getProject";
+		return "getProjects";
 	}
 	
 	@GetMapping("/get/project/{id}")
@@ -77,19 +85,138 @@ public class FrontEndController {
 		model.addAttribute("projectMembers", service.getProjectMembers(id));
 		model.addAttribute("projectModels", service.getProjectsModel(id));
 		// return the name of the html file you want to return to..... html file has to be in resources/templates
-		return "returnProject";
+		return "getProject";
 	
 	}
 	
 
 	
 	// this is the function that will be called when the form is submited
-	@PostMapping("/get/project")
-	public String testGetProjectSubmit(@ModelAttribute GetByIdObject getByIdObject, Model model) throws IOException{
+	@PostMapping("/get/projects")
+	public String testGetProjectSubmit(
+			@RequestParam(value = "add", required = false) String add,
+			@ModelAttribute GetByIdObject getByIdObject, Model model) throws IOException{
 			int id = getByIdObject.getId();
+			
+			if(add != null) {
+				if(add.equals("View All Models")) {
+				return "redirect:/get/models";
+				}
+			}
+			if(id == -1) {
+				return "redirect:/get/models";
+			}
 			return "redirect:/get/project/" + id;
 	}
 	
+	
+	@GetMapping("/get/models")
+	public String GetModels(Model model) {
+		// the name here will be its name in the html docutment ${"GetByIdObject"}
+		ArrayList<HashMap<String, String>> models = service.getAllModels();
+		model.addAttribute("getByIdObject", new GetByIdObject());
+		model.addAttribute("modelsArrayList", models);
+	// return the html page that contains to form 	..... html file has to be in resources/templates
+		return "getModels";
+	}
+	
+	@PostMapping("/get/models")
+	public String GetModels(
+		@RequestParam(value = "add", required = false) String add,
+		@ModelAttribute GetByIdObject getByIdObject, Model model) throws IOException{
+		
+		int id = getByIdObject.getId();	
+		if(add != null) {
+			if(add.equals("View All Projects")) {
+			return "redirect:/get/projects";
+			}
+		}
+		if(id == -1) {
+			return "redirect:/get/models";
+		}
+		return "redirect:/get/model/" + id;
+	}
+	
+	@GetMapping("/get/model/{id}")
+	public String GetModel(@PathVariable int id, Model model) {
+		
+		HashMap<String, String> mod = service.getModel(id).get(0);
+		String modelName = mod.get("modelname");
+		int modelID = Integer.parseInt(mod.get("modelid"));
+		String modelDescription = mod.get("description");
+		String modelDate = mod.get("creationdate");
+		String modelType = mod.get("modeltype");
+		String sourceLanguage = mod.get("sourcelanguage");
+		
+		model.addAttribute("modelName", modelName);
+		model.addAttribute("modelID", modelID);
+		model.addAttribute("modelDescription", modelDescription);
+		model.addAttribute("modelDate", modelDate);
+		model.addAttribute("modelType", modelType);
+		model.addAttribute("sourceLanguage", sourceLanguage);
+		
+		ArrayList<HashMap<String,String>> parentChildren = service.getModelChildren(modelID);
+		HashMap<Integer, HashMap<String,String>> map = new HashMap<Integer, HashMap<String,String>>();
+		HashMap<Integer,ArrayList<Integer>> h = new HashMap<Integer,ArrayList<Integer>>();
+		if(parentChildren.size() != 0) {		
+			for(int i = 0; i < parentChildren.size(); i++) {
+		
+				HashMap<String, String> parentChild = parentChildren.get(i);
+				int childID = Integer.parseInt(parentChild.get("childid"));
+				int parentID = Integer.parseInt(parentChild.get("parentid"));
+				HashMap<String, String> child = service.getModel(childID).get(0);
+				
+				ArrayList<Integer> parent = h.get(parentID);
+				if(parent == null) {
+					ArrayList<Integer> childList = new ArrayList<Integer>();
+					childList.add(childID);
+					h.put(parentID, childList);
+					
+				}else {
+					parent.add(childID);
+					h.put(parentID, parent);
+				}
+				
+				
+				
+				map.put(childID, child);
+			}
+			//System.out.print(h.get(65));
+			m(h,h.get(modelID), 0, map);
+		}
+		
+//		for (Map.Entry<Integer, HashMap<String,String>> e : treeMap.entrySet()) {
+//            System.out.println(e.getKey() 
+//                               + " "
+//                               + e.getValue().get("modelname")); 
+//		}
+		model.addAttribute("modelChildrenMap", h);
+		model.addAttribute("modelSubModels", map);
+		model.addAttribute("modelSize", map.size());
+		
+		model.addAttribute("modelAuthors", service.getMembersFromModel(modelID));
+		model.addAttribute("modelProject", service.getModelsProjects(modelID));
+		// return the name of the html file you want to return to..... html file has to be in resources/templates
+		return "displayModel";
+	
+	}
+	
+	
+	public void m(HashMap<Integer,ArrayList<Integer>> h, ArrayList<Integer> parent, int level, HashMap<Integer, HashMap<String,String>> map) {
+		
+		for(int i = 0; i < parent.size(); i++) {
+			int childId = parent.get(i);
+			ArrayList<Integer> childsChildren = h.get(childId);
+			if(childsChildren == null) {
+				
+				
+			}else {
+				m(h,childsChildren, level + 1,map);
+				
+			}
+		}
+		
+	}
 	
 	@GetMapping("/insert/project")
 	public String testInsertProject(Model model) {
@@ -184,6 +311,32 @@ public class FrontEndController {
 	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return "addModelsToProject";
 	}
+	
+	
+	@GetMapping("/run/simulation")
+	public String runSimulation(Model model) {
+		
+		model.addAttribute("runSimulation", new runSimulationModel());
+		model.addAttribute("models", service.getModel(70));
+		model.addAttribute("modelsSimulations", service.getModelSourceFiles(70));
+	// return the html page that contains to form 	..... html file has to be in resources/templates
+		return "runModel.html";
+	}
+	
+	
+	@GetMapping("/run")
+	public ResponseEntity<String> run(Model model) {
+		
+		ArrayList<String> output =  application.runSimulation.run();
+		String h = " ";
+		for(String o : output) {
+			 h += o + "<br><br><br>";
+		}
+	// return the html page that contains to form 	..... html file has to be in resources/templates
+		return ResponseEntity.status(HttpStatus.OK).body(h.toString());
+	}
+	
+	
 	
 	
 	

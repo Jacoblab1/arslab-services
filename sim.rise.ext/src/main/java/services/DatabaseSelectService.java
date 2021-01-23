@@ -141,8 +141,10 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModel(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT modelid, modelname, description, creationdate, modeltype, sourcelanguage "
-					+ "FROM \"FourthYearProject\".\"Model\" "
+		String sql = "SELECT m.modelid modelid, modelname, description, creationdate, mt.modeltypename modeltype, sourcelanguage "
+					+ "FROM \"FourthYearProject\".\"Model\" m "
+					+ "inner join \"FourthYearProject\".\"ModelType\" mt " 
+					+ "on m.modeltype = mt.modeltypeid "
 					+ "where modelid = ?;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -426,8 +428,6 @@ public class DatabaseSelectService {
 					+ " from \"FourthYearProject\".\"Model Files\" mf "
 					+ " inner join \"FourthYearProject\".\"Model\" mo "
 					+ " on mo.modelid = mf.modelid "
-					+ " inner join \"FourthYearProject\".\"Converted Results\" cr "
-					+ " on mf.fileid = cr.fileid "
 					+ " inner join \"FourthYearProject\".\"Members\" me "
 					+ " on mf.author = me.memberid "
 					+ " where mf.modelid = ?;";
@@ -463,7 +463,7 @@ public class DatabaseSelectService {
 					+ " on pm.modelid = cte_model.parentid"
 					+ " inner join \"FourthYearProject\".\"Model\" cm"
 					+ " on cm.modelid = cte_model.childid"
-					+ " ORDER BY lev ASC;";
+					+ " ORDER BY lev, childname ASC;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, modelID);
