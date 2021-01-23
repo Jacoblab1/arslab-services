@@ -104,7 +104,7 @@ public class FrontEndController {
 				}
 			}
 			if(id == -1) {
-				return "redirect:/get/models";
+				return "redirect:/get/projects";
 			}
 			return "redirect:/get/project/" + id;
 	}
