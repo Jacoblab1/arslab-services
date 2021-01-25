@@ -148,6 +148,7 @@ public class FrontEndController {
 		String modelType = mod.get("modeltype");
 		String sourceLanguage = mod.get("sourcelanguage");
 		
+		
 		model.addAttribute("modelName", modelName);
 		model.addAttribute("modelID", modelID);
 		model.addAttribute("modelDescription", modelDescription);
@@ -196,6 +197,10 @@ public class FrontEndController {
 		
 		model.addAttribute("modelAuthors", service.getMembersFromModel(modelID));
 		model.addAttribute("modelProject", service.getModelsProjects(modelID));
+		model.addAttribute("modelAllFiles", service.getModelFiles(modelID));
+		model.addAttribute("modelSourceFiles", service.getModelSourceFiles(modelID));
+		model.addAttribute("modelResultFiles", service.getModelResultFiles(modelID));
+		model.addAttribute("modelConvertedFiles", service.getModelConvertedFiles(modelID));
 		// return the name of the html file you want to return to..... html file has to be in resources/templates
 		return "displayModel";
 	

@@ -5,7 +5,98 @@
     left: 42px;
 }
 
+.fileContainer{
+    display: block;
+    width: 500px;
+    margin-bottom: 16px !important;
+    background-color: whitesmoke;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 6px;
+}
 
+
+
+.fileContainer .fileContainerRow:not(:first-child){
+    border-top: solid black;
+    border-top-width: 1px;
+}
+
+ .fileContainerRow{
+    display: flex !important;
+    padding: 16px;
+    margin-top: -1px;
+    list-style-type: none;
+    
+    position: relative !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important; 
+}
+
+.folderImage{
+    width: 16px;
+    margin-right: 10px;
+}
+
+.fileImage{
+    width: 16px;
+    margin-right: 10px;
+}
+
+.fileContent{
+   width: 100%;
+
+}
+
+.dateCreated{
+    position: relative;
+    width: 140px;
+    text-align: center;
+    vertical-align: text-top;
+}
+
+.downloadButton{
+    position: absolute;
+    top: 50%;
+    display: inline;
+    padding: 0px;
+    margin-top: -10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: none;
+
+
+}
+.backButton{
+    position: relative;
+    display: inline;
+    padding: 0;
+    margin: -1;
+    width: 17px;
+    height: 16px;
+    background-color: none;
+}
+
+.backButton svg{
+    position: absolute;
+    top: -1px;
+    left: -.75px;
+}
+
+.downloadButton svg{
+    position: absolute;
+    top: 1px;
+    left: 0px;
+}
+
+body{
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    font-size: 14px;
+    line-height: 1.5;
+}
 
 
 #simulationEverywhereLink{
@@ -140,20 +231,19 @@ header a:visited {
 }
 
 a{
-    text-decoration: none;
-    color: black;
 }
 
 
 
 
-body{
-    font-family: sans-serif;
-}
+
 
 main{
     margin-left: 10%;
     color: black;
+    
+
+    
 }
 
 .groupTitle p {
