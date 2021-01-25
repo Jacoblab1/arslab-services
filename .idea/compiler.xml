@@ -12,10 +12,10 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11">
-      <module name="arslab-services" target="1.8" />
-      <module name="sim.parsing" target="1.8" />
-      <module name="sim.rise.ext" target="1.8" />
-      <module name="sim.services" target="1.8" />
+      <module name="arslab-services" target="11" />
+      <module name="sim.parsing" target="11" />
+      <module name="sim.rise.ext" target="11" />
+      <module name="sim.services" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
