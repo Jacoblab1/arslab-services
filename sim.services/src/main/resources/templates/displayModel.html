@@ -3,8 +3,10 @@
 <head> 
     <title>Display Model</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
-</head>
+    <script th:src ="@{/javaScript/jquery-3.4.1.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
+    <link th:href="@{/css/main.css}" href="../static/css/main.css" type="text/css" rel="stylesheet">
+    <script th:src ="@{/javaScript/displayFiles.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
+    </head>
 
 <body>
 
@@ -38,7 +40,69 @@
                 </ol>
             </div>
             
+
+            <h4> Files</h4>
+
             
+            <div id = "allFilesHolder"></div>
+            <div id = "sourceFilesHolder"></div>
+            <div id = "convertedFilesHolder"></div>
+            <div id = "resultFilesHolder"></div>
+
+
+            <div id = "fileTypeSelector" class = "fileContainer">
+                
+                <div id = "allFilesSelector" class = "fileContainerRow"> 
+                    <div class = "folderImage"> 
+                        <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
+                    </div>
+                    <div class= "fileContent">
+                        All Files
+                    </div>
+                    <div id = "allFilesDateModified" class = "dateCreated"></div>
+                </div>
+
+                <div id = "sourceSelector" class = "fileContainerRow"> 
+                    <div class = "folderImage"> 
+                        <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
+                    </div>
+                    <div class= "fileContent">
+                        Source Files
+                    </div>
+                    <div id = "sourceDateModified" class = "dateCreated"></div>
+                </div>
+                <div id = "convertedSelector" class = "fileContainerRow"> 
+                    <div class = "folderImage"> 
+                        <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
+                    </div>
+                    <div class= "fileContent">
+                        Converted Files
+                    </div>
+                    <div id = "convertedDateModified" class = "dateCreated"></div>
+                </div>
+                <div id = "resultSelector" class = "fileContainerRow"> 
+                    <div class = "folderImage"> 
+                        <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
+                    </div>
+                    <div class= "fileContent">
+                        Result Files
+                    </div>
+                    <div id = "resultDateModified" class = "dateCreated"></div>
+                </div>
+            </div>
+
+            <script th:inline="javascript">
+                let modelAllFiles = [[${modelAllFiles}]];
+                let modelSourceFiles = [[${modelSourceFiles}]];
+                let modelResultFiles = [[${modelResultFiles}]];
+                let modelConvertedFiles = [[${modelConvertedFiles}]];
+
+                
+                displayAllFiles(modelAllFiles,"allFilesHolder","#allFilesDateModified");
+                displayAllFiles(modelSourceFiles,"sourceFilesHolder","#sourceDateModified");
+                displayAllFiles(modelResultFiles,"resultFilesHolder","#convertedDateModified");
+                displayAllFiles(modelConvertedFiles,"convertedFilesHolder","#resultDateModified");
+           </script>
 
             <h4>Projects containg this Model:</h4>
 
@@ -67,14 +131,16 @@
 
                 function recursiveParentChildPrint(modelChildrenMap,parent,level,modelSubModels){
                     let listContents = "";
-                    for(let i = 0; i < parent.length; i++) {
-                        let childId = parent[i];
-                        let childsChildren = modelChildrenMap[childId];
-                        
-                        listContents += "<li> <a href=\"/get/model/" + modelSubModels[childId]["modelid"] + "\">" + modelSubModels[childId]["modelname"] + "</a> </li>";
-                        
-                        if(childsChildren != undefined) {
-                            listContents += "<ul>" + recursiveParentChildPrint(modelChildrenMap,childsChildren, level + 1,modelSubModels)  + "</ul>";
+                    if(parent != undefined){
+                        for(let i = 0; i < parent.length; i++) {
+                            let childId = parent[i];
+                            let childsChildren = modelChildrenMap[childId];
+                            
+                            listContents += "<li> <a href=\"/get/model/" + modelSubModels[childId]["modelid"] + "\">" + modelSubModels[childId]["modelname"] + "</a> </li>";
+                            
+                            if(childsChildren != undefined) {
+                                listContents += "<ul>" + recursiveParentChildPrint(modelChildrenMap,childsChildren, level + 1,modelSubModels)  + "</ul>";
+                            }
                         }
                     }
                     return listContents;
