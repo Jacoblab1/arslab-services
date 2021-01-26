@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="sim.services:war">
+    <output-path>$PROJECT_DIR$/sim.services/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>sim.services</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="sim.services.war">
+      <element id="artifact" artifact-name="sim.services:war exploded" />
+    </root>
+  </artifact>
+</component>
