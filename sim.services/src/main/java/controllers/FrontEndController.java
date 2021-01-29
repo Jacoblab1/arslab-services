@@ -214,14 +214,35 @@ public class FrontEndController {
 			files.get(i).put("location", url);
 		}
 		
+		ArrayList<HashMap<String,String>> modelSourceFiles = service.getModelSourceFiles(modelID);
+		for(int i = 0; i < modelSourceFiles.size(); i++) {
+			System.out.println(modelSourceFiles.get(i).get("location"));
+			String url = s3.getObjectUrl(modelSourceFiles.get(i).get("location"));
+			modelSourceFiles.get(i).put("location", url);
+		}
+		
+		ArrayList<HashMap<String,String>> modelResultFiles = service.getModelResultFiles(modelID);
+		for(int i = 0; i < modelResultFiles.size(); i++) {
+			System.out.println(modelResultFiles.get(i).get("location"));
+			String url = s3.getObjectUrl(modelResultFiles.get(i).get("location"));
+			modelResultFiles.get(i).put("location", url);
+		}
+		
+		ArrayList<HashMap<String,String>> modelConvertedFiles = service.getModelConvertedFiles(modelID);
+		for(int i = 0; i < modelConvertedFiles.size(); i++) {
+			System.out.println(modelConvertedFiles.get(i).get("location"));
+			String url = s3.getObjectUrl(modelConvertedFiles.get(i).get("location"));
+			modelConvertedFiles.get(i).put("location", url);
+		}
+		
 		
 		
 		model.addAttribute("modelAuthors", service.getMembersFromModel(modelID));
 		model.addAttribute("modelProject", service.getModelsProjects(modelID));
 		model.addAttribute("modelAllFiles", files);
-		model.addAttribute("modelSourceFiles", service.getModelSourceFiles(modelID));
-		model.addAttribute("modelResultFiles", service.getModelResultFiles(modelID));
-		model.addAttribute("modelConvertedFiles", service.getModelConvertedFiles(modelID));
+		model.addAttribute("modelSourceFiles", modelSourceFiles);
+		model.addAttribute("modelResultFiles", modelResultFiles);
+		model.addAttribute("modelConvertedFiles", modelConvertedFiles);
 		// return the name of the html file you want to return to..... html file has to be in resources/templates
 		return "displayModel";
 	
