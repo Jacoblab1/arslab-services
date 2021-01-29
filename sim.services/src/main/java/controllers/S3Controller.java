@@ -19,6 +19,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.scheduling.annotation.Async;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSCredentials;
@@ -38,6 +39,10 @@ public class S3Controller {
 	private AWSCredentials credentials;
 	private AmazonS3 s3client;
 	private String bucketName;
+	private byte[] allFiles;
+	private byte[] sourceFiles;
+	private byte[] originalFiles;
+	private byte[] convertedFiles;
 	
 	public S3Controller() {
 		// These credentials should normally be stored as environment variables for increased security 
@@ -61,6 +66,20 @@ public class S3Controller {
 		// This is the name of the bucket files are stored in
 		bucketName = "ars-lab";
 	}
+	
+	
+	@Async
+	public void asyncGetZipFiles() {
+		
+	}
+	
+	@Async("threadPoolTaskExecutor")
+	public void asyncMethodWithConfiguredExecutor() {
+	    System.out.println("Execute method with configured executor - "
+	      + Thread.currentThread().getName());
+	}
+	
+	
 	
 	/** Upload a file to the S3 Bucket
 	 * 
