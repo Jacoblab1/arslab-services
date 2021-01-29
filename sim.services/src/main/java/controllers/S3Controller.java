@@ -42,11 +42,12 @@ public class S3Controller {
 	public S3Controller() {
 		// These credentials should normally be stored as environment variables for increased security 
 		credentials = new BasicAWSCredentials(
-				"AKIAR4NSFYC27L5UBLEO", 
-				 "2FDDuB9L361ZI1npHdthP1tPkK9cypT3jSZwYl4n"
+				 System.getenv("AWS_ACCESS_KEY"), 
+				  System.getenv("AWS_SECRET_KEY")
 				);
 		
-		
+		System.out.println(System.getenv("AWS_ACCESS_KEY"));
+		System.out.println(System.getenv("AWS_SECRET_KEY"));
 		//"AKIAR4NSFYC2XMDYZCZS", 					
 		//  "AXGOsQbzXeBi2UUz+D47w1aAake9UCnRx/uomOxr"
 		
