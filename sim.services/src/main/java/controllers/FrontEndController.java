@@ -3,12 +3,19 @@ package controllers;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,9 +23,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 
 import components.NewMember;
 import components.runSimulationModel;
@@ -29,11 +39,12 @@ import components.InsertNewProject;
 import services.DatabaseInsertServices;
 import services.DatabaseSelectService;
 import controllers.DatabaseSelectController;
+import controllers.S3Controller;
 import sun.tools.jar.CommandLine;
 
 
 
-
+@EnableAsync
 @Controller
 public class FrontEndController {
 
@@ -195,9 +206,19 @@ public class FrontEndController {
 		model.addAttribute("modelSubModels", map);
 		model.addAttribute("modelSize", map.size());
 		
+		S3Controller s3 = new S3Controller();
+		ArrayList<HashMap<String,String>> files = service.getModelFiles(modelID);
+		for(int i = 0; i < files.size(); i++) {
+			System.out.println(files.get(i).get("location"));
+			String url = s3.getObjectUrl(files.get(i).get("location"));
+			files.get(i).put("location", url);
+		}
+		
+		
+		
 		model.addAttribute("modelAuthors", service.getMembersFromModel(modelID));
 		model.addAttribute("modelProject", service.getModelsProjects(modelID));
-		model.addAttribute("modelAllFiles", service.getModelFiles(modelID));
+		model.addAttribute("modelAllFiles", files);
 		model.addAttribute("modelSourceFiles", service.getModelSourceFiles(modelID));
 		model.addAttribute("modelResultFiles", service.getModelResultFiles(modelID));
 		model.addAttribute("modelConvertedFiles", service.getModelConvertedFiles(modelID));
@@ -342,6 +363,23 @@ public class FrontEndController {
 	}
 	
 	
+	@RequestMapping(value = "/zip/files", method = RequestMethod.POST)
+	@ResponseBody
+	public String zipFiles(HttpServletRequest request, Model model) {
+		//model.addAttribute("link",);
+		System.out.println(request.getParameter("modelId"));
+		S3Controller s3 = new S3Controller();
+		byte[] b =  s3.test();
+		
+		//Convert.ToBase64String
+		//Encoder encoder = Base64.getEncoder();
+		//String encodedString = encoder.encodeToString(b);
+		//System.out.print(encodedString);
+		return new String(Base64.getEncoder().encode(b));
+	}
+	
+	
+
 	
 	
 	
