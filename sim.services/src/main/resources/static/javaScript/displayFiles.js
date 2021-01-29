@@ -23,10 +23,10 @@ function displayAllFiles(allFiles,containerID, dateID){
             fileImage.innerHTML = '<svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M3.75 1.5a.25.25 0 00-.25.25v11.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V6H9.75A1.75 1.75 0 018 4.25V1.5H3.75zm5.75.56v2.19c0 .138.112.25.25.25h2.19L9.5 2.06zM2 1.75C2 .784 2.784 0 3.75 0h5.086c.464 0 .909.184 1.237.513l3.414 3.414c.329.328.513.773.513 1.237v8.086A1.75 1.75 0 0112.25 15h-8.5A1.75 1.75 0 012 13.25V1.75z"></path></svg>'
             fileContent.innerHTML = allFiles[i]["name"];
             dateCreated.innerHTML = allFiles[i]["created"];
-
-            downloadFile.innerHTML = '<svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 490 490" version="1.1" width="16" role="img">' +
+            let downloadLink = allFiles[i]["location"];
+            downloadFile.innerHTML = '<a href="' + downloadLink + '" target="_blank" download><svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 490 490" version="1.1" width="16" role="img">' +
             '<path id="path2" d="M411.55,100.9l-94.7-94.7c-4.2-4.2-9.4-6.2-14.6-6.2H92.15c-11.4,0-20.8,9.4-20.8,20.8v330.8c0,11.4,9.4,20.8,20.8,20.8   h132.1V421l-16.6-15.2c-8.3-7.3-21.8-7.3-29.1,1s-7.3,21.8,1,29.1l52,47.9c3.1,3.1,14.6,10.2,29.1,0l52-47.9   c8.3-8.3,8.3-20.8,1-29.1c-8.3-8.3-20.8-8.3-29.1-1l-18.7,17.2v-50.5h132.1c11.4,0,19.8-9.4,19.8-19.8V115.5   C417.85,110.3,415.75,105.1,411.55,100.9z M324.15,70.4l39.3,38.9h-39.3V70.4z M265.95,331.9v-130c0-11.4-9.4-20.8-20.8-20.8   c-11.4,0-20.8,9.4-20.8,20.8v130h-111.3V41.6h169.6v86.3c0,11.4,9.4,20.8,20.8,20.8h74.9v183.1h-112.4V331.9z"/>'
-             + '</svg>';
+             + '</svg></a>';
             
 
 
@@ -57,13 +57,15 @@ function displayAllFiles(allFiles,containerID, dateID){
         
     }
 
+    
+
     if(date != undefined){
         date = new Date(date).toLocaleDateString('en-US', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
           })
-          $(dateID).html(date + '<button class = "downloadButton"> <svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 490 490" version="1.1" width="16" role="img">' +
+          $('#' + dateID).html(date + '<button class = "downloadButton zip" value = "'  + containerID + '" > <svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 490 490" version="1.1" width="16" role="img">' +
           '<path id="path2" d="M411.55,100.9l-94.7-94.7c-4.2-4.2-9.4-6.2-14.6-6.2H92.15c-11.4,0-20.8,9.4-20.8,20.8v330.8c0,11.4,9.4,20.8,20.8,20.8   h132.1V421l-16.6-15.2c-8.3-7.3-21.8-7.3-29.1,1s-7.3,21.8,1,29.1l52,47.9c3.1,3.1,14.6,10.2,29.1,0l52-47.9   c8.3-8.3,8.3-20.8,1-29.1c-8.3-8.3-20.8-8.3-29.1-1l-18.7,17.2v-50.5h132.1c11.4,0,19.8-9.4,19.8-19.8V115.5   C417.85,110.3,415.75,105.1,411.55,100.9z M324.15,70.4l39.3,38.9h-39.3V70.4z M265.95,331.9v-130c0-11.4-9.4-20.8-20.8-20.8   c-11.4,0-20.8,9.4-20.8,20.8v130h-111.3V41.6h169.6v86.3c0,11.4,9.4,20.8,20.8,20.8h74.9v183.1h-112.4V331.9z"/>'
            + '</svg></button>');
     }else{
@@ -76,9 +78,53 @@ function displayAllFiles(allFiles,containerID, dateID){
    }
 
 
-
+   function base64ToArrayBuffer(base64) {
+    var binaryString = window.atob(base64);
+    var binaryLen = binaryString.length;
+    var bytes = new Uint8Array(binaryLen);
+    for (var i = 0; i < binaryLen; i++) {
+        var ascii = binaryString.charCodeAt(i);
+        bytes[i] = ascii;
+    }
+    return bytes;
+}
 
 $(function(){
+
+    $(".zip").click(function (event){
+        //var modelID = 70;
+        var data = {
+            modelId: 70
+        };
+        
+        
+        console.log(data);
+        var progress = document.getElementById("progress" + event.target.id);
+       
+
+        $.ajax({
+            url: "/zip/files",
+            type: 'POST',
+            data: data, 
+            contentType: false,
+            processData: false,
+            success: function(d){
+               saveByteArray(d);
+            }
+        });
+
+        console.log("saving");
+
+        // ajax.onprogress = function(e){
+        //     progress.max = e.total;
+        //     progress.value = e.total;
+        // };
+
+        return;
+        //saveByteArray();
+    });
+
+
     $('#allFilesSelector').click(function () {
         $( '#allFilesHolder' ).show();
         $( '#sourceFilesHolder' ).hide();
@@ -125,6 +171,44 @@ $(function(){
 
 
 
+function saveByteArray(byte) {
 
+    
+
+    
+    
+
+    const contentType = 'application/zip';
+    const b64Data = byte;
+    const blob = b64toBlob(b64Data, contentType);
+    //saveAs(blob, "data");
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = URL.createObjectURL(blob);
+    a.download = "data.Zip";
+    a.click();
+    document.body.removeChild(a);
+
+};
+
+const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+  
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+  
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+  
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+  }
 
 
