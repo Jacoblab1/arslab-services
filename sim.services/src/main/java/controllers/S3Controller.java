@@ -58,7 +58,8 @@ public class S3Controller {
 				  System.getenv("AWS_SECRET_KEY")
 				);
 		
-		
+		System.out.println(System.getenv("AWS_ACCESS_KEY"));
+		System.out.println(System.getenv("AWS_SECRET_KEY"));
 		//"AKIAR4NSFYC2XMDYZCZS", 					
 		//  "AXGOsQbzXeBi2UUz+D47w1aAake9UCnRx/uomOxr"
 		
