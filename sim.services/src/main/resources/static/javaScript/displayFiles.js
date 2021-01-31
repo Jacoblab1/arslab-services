@@ -1,5 +1,5 @@
 
-function displayAllFiles(allFiles,containerID, dateID){
+function displayAllFiles(allFiles,containerID, dateID, name){
     let fileContainer = document.createElement("div");
     fileContainer.className = "fileContainer";
     let date = undefined;
@@ -65,7 +65,7 @@ function displayAllFiles(allFiles,containerID, dateID){
             month: '2-digit',
             year: 'numeric',
           })
-          $('#' + dateID).html(date + '<button class = "downloadButton zip" value = "'  + containerID + '" > <svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 490 490" version="1.1" width="16" role="img">' +
+          $('#' + dateID).html(date + '<button name = "' + name + '" class = "downloadButton zip" value = "'  + containerID + '"> <svg aria-label="File" class="octicon octicon-file text-gray-light" height="16" viewBox="0 0 490 490" version="1.1" width="16" role="img">' +
           '<path id="path2" d="M411.55,100.9l-94.7-94.7c-4.2-4.2-9.4-6.2-14.6-6.2H92.15c-11.4,0-20.8,9.4-20.8,20.8v330.8c0,11.4,9.4,20.8,20.8,20.8   h132.1V421l-16.6-15.2c-8.3-7.3-21.8-7.3-29.1,1s-7.3,21.8,1,29.1l52,47.9c3.1,3.1,14.6,10.2,29.1,0l52-47.9   c8.3-8.3,8.3-20.8,1-29.1c-8.3-8.3-20.8-8.3-29.1-1l-18.7,17.2v-50.5h132.1c11.4,0,19.8-9.4,19.8-19.8V115.5   C417.85,110.3,415.75,105.1,411.55,100.9z M324.15,70.4l39.3,38.9h-39.3V70.4z M265.95,331.9v-130c0-11.4-9.4-20.8-20.8-20.8   c-11.4,0-20.8,9.4-20.8,20.8v130h-111.3V41.6h169.6v86.3c0,11.4,9.4,20.8,20.8,20.8h74.9v183.1h-112.4V331.9z"/>'
            + '</svg></button>');
     }else{
@@ -89,47 +89,45 @@ function displayAllFiles(allFiles,containerID, dateID){
     return bytes;
 }
 
+
+
+
+
+
+
+
 $(function(){
 
+    $(document).ready(function() {
+        var data = {
+            mod: modelId,
+        };
+
+        $.post("/zip", $.param(data), function(d) {
+            $(".zip").show();
+        });
+    });
+
     $(".zip").click(function (event){
+        event.stopPropagation();
+        var name = event.currentTarget.getAttribute('name');
         //var modelID = 70;
         var data = {
-            modelId: 70
+            Name: name,
         };
-        
-        
-        console.log(data);
-        var progress = document.getElementById("progress" + event.target.id);
-       
-
-        $.ajax({
-            url: "/zip/files",
-            type: 'POST',
-            data: data, 
-            contentType: false,
-            processData: false,
-            success: function(d){
-               saveByteArray(d);
-            }
+        $.post("/zip/files", $.param(data), function(d) {
+            saveByteArray(d);
         });
-
-        console.log("saving");
-
-        // ajax.onprogress = function(e){
-        //     progress.max = e.total;
-        //     progress.value = e.total;
-        // };
-
-        return;
     });
 
 
-    $('#allFilesSelector').click(function () {
+    $('#allFilesSelector').click(function (event) {
         $( '#allFilesHolder' ).show();
         $( '#sourceFilesHolder' ).hide();
         $( '#resultFilesHolder' ).hide();
         $( '#convertedFilesHolder' ).hide();
         $( '#fileTypeSelector' ).hide();
+        
     });
 
     $('#sourceSelector').click(function () {
@@ -172,11 +170,6 @@ $(function(){
 
 function saveByteArray(byte) {
 
-    
-
-    
-    
-
     const contentType = 'application/zip';
     const b64Data = byte;
     const blob = b64toBlob(b64Data, contentType);
@@ -208,6 +201,6 @@ const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
   
     const blob = new Blob(byteArrays, {type: contentType});
     return blob;
-  }
+}
 
 
