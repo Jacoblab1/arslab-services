@@ -39,10 +39,7 @@ public class S3Controller {
 	private AWSCredentials credentials;
 	private AmazonS3 s3client;
 	private String bucketName;
-	private byte[] allFiles;
-	private byte[] sourceFiles;
-	private byte[] originalFiles;
-	private byte[] convertedFiles;
+
 	
 	public S3Controller() {
 		// These credentials should normally be stored as environment variables for increased security 
@@ -68,16 +65,7 @@ public class S3Controller {
 	}
 	
 	
-	@Async
-	public void asyncGetZipFiles() {
-		
-	}
 	
-	@Async("threadPoolTaskExecutor")
-	public void asyncMethodWithConfiguredExecutor() {
-	    System.out.println("Execute method with configured executor - "
-	      + Thread.currentThread().getName());
-	}
 	
 	
 	
@@ -102,22 +90,58 @@ public class S3Controller {
         expiration.setTime(expTimeMillis);
 
         // Generate the presigned URL.
-        System.out.println("Generating pre-signed URL.");
+       // System.out.println("Generating pre-signed URL.");
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, key)
                         .withMethod(HttpMethod.GET)
                         .withExpiration(expiration);
         URL url = s3client.generatePresignedUrl(generatePresignedUrlRequest);
 
-        System.out.println("Pre-Signed URL: " + url.toString());
+        //System.out.println("Pre-Signed URL: " + url.toString());
         
         return url.toString();
 	}
 	
+	public byte[] zipFiles(ArrayList<HashMap<String,String>> files) {
+		
+		
+		
+		try {
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		    ZipOutputStream zip = new ZipOutputStream(byteArrayOutputStream);
+		    InputStream is;
+		    for(int i = 0; i < files.size(); i++) {
+				//System.out.println(files.get(i).get("location"));
+				String location = getObjectUrl(files.get(i).get("location"));
+				
+				URL url = new URL(location);
+		        is = url.openStream();
+		       // Path pathInZipfile = zipfs.getPath((files.get(i).get("name") + files.get(i).get("type")));
+		        zip.putNextEntry(new ZipEntry(files.get(i).get("location")));
+		        int length;
+
+		        byte[] b = new byte[2048];
+
+		        while((length = is.read(b)) > 0) {
+		            zip.write(b, 0, length);
+		        }
+		        zip.closeEntry();
+		        is.close();
+		       
+		    }
+		    zip.close();
+		    return byteArrayOutputStream.toByteArray();
+		   
+		    
+		}catch(Exception e) {
+			
+		}
+		
+		return null;	
+	}
+	
 	public byte[] test() {
 		
-		S3Object s3object = s3client.getObject(bucketName, "simulation_results/ABP_output_messages.txt");
-		S3ObjectInputStream inputStream = s3object.getObjectContent();
 		DatabaseSelectService service = new DatabaseSelectService();
 		ArrayList<HashMap<String,String>> files = service.getModelFiles(70);
 		

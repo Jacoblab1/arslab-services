@@ -13,7 +13,7 @@
 
     <div th:replace="header :: header"></div>
    
-    <main>
+    <main id ="main">
         <div class = groupTitle>
             <h1 th:utext="${modelName}" ></h1>
             <p> <em th:text="'Model ID:' + ${modelID}"></em></p>
@@ -98,12 +98,14 @@
                 let modelResultFiles = [[${modelResultFiles}]];
                 let modelConvertedFiles = [[${modelConvertedFiles}]];
                 let byte = [[${link}]];
+                let modelId = [[${modelID}]];
 
+                displayAllFiles(modelAllFiles,"allFilesHolder","allFilesDateModified","modelAllFiles");
+                displayAllFiles(modelSourceFiles,"sourceFilesHolder","sourceDateModified","modelSourceFiles");
+                displayAllFiles(modelResultFiles,"resultFilesHolder","convertedDateModified","modelResultFiles");
+                displayAllFiles(modelConvertedFiles,"convertedFilesHolder","resultDateModified","modelConvertedFiles");
                 
-                displayAllFiles(modelAllFiles,"allFilesHolder","allFilesDateModified");
-                displayAllFiles(modelSourceFiles,"sourceFilesHolder","sourceDateModified");
-                displayAllFiles(modelResultFiles,"resultFilesHolder","convertedDateModified");
-                displayAllFiles(modelConvertedFiles,"convertedFilesHolder","resultDateModified");
+                
            </script>
 
             <h4>Projects containg this Model:</h4>
@@ -124,7 +126,6 @@
 
 
             <script th:inline="javascript">
-                let modelId = [[${modelID}]];
                 let modelChildrenMap =  [[${modelChildrenMap}]];
                 let modelSubModels = [[${modelSubModels}]];
                 let modelName = [[${modelName}]];
