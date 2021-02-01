@@ -7,7 +7,8 @@
     <link th:href="@{/css/main.css}" href="../static/css/main.css" type="text/css" rel="stylesheet">
     <script th:src ="@{/javaScript/displayFiles.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
     <script th:src ="@{/javaScript/FileSaver.js}" src = "../static/javaScript/FileSaver.js" type="application/javascript"> </script>
-    </head>
+    <script th:src ="@{/javaScript/moreInformation.js}" src = "../static/javaScript/moreInformation.js" type="application/javascript"> </script>  
+</head>
 
 <body>
 
@@ -98,7 +99,7 @@
                 let modelResultFiles = [[${modelResultFiles}]];
                 let modelConvertedFiles = [[${modelConvertedFiles}]];
                 let byte = [[${link}]];
-                let modelId = [[${modelID}]];
+                let Id = [[${modelID}]];
 
                 displayAllFiles(modelAllFiles,"allFilesHolder","allFilesDateModified","modelAllFiles");
                 displayAllFiles(modelSourceFiles,"sourceFilesHolder","sourceDateModified","modelSourceFiles");
@@ -108,11 +109,13 @@
                 
            </script>
 
-            <h4>Projects containg this Model:</h4>
+            <h4>Projects contaning this Model:</h4>
 
             <ol>
                 <li th:each = "projectModelsMap : ${modelProject}" >
                     <a th:href="@{/get/project/{id}(id=${projectModelsMap.get('projectid')})}" th:text = "${projectModelsMap.get('projectname')}  + ' (' + ${projectModelsMap.get('projectid')} + ')'"> </a>
+                    <a class = "showMoreButton" th:name = "'modelProjects' + ${projectModelsMap.get('projectid')}"><svg th:id = "'modelProjects' + ${projectModelsMap.get('projectid')} + 'SVG'" class="infoArrow" xmlns="http://www.w3.org/2000/svg" version="1.1" width="16" height="16">> <path d="m 13,6 -5,5 -5,-5 z" fill="#0000ff"/></svg><a>                     
+                    <div class = "informationDiv" th:id = "'modelProjects' + ${projectModelsMap.get('projectid')} +'Information'" th:text= "${projectModelsMap.get('projectdescription')}"></div>
                 </li>
             </ol>
 
@@ -131,7 +134,7 @@
                 let modelName = [[${modelName}]];
 
 
-                let string = recursiveParentChildPrint(modelChildrenMap, modelChildrenMap[modelId],0,modelSubModels);
+                let string = recursiveParentChildPrint(modelChildrenMap, modelChildrenMap[Id],0,modelSubModels);
                 document.getElementById("modelChildren").innerHTML = "<li> <strong>" + modelName + "</strong><ul>" + string + "</ul> </li>";
 
                 function recursiveParentChildPrint(modelChildrenMap,parent,level,modelSubModels){
@@ -141,7 +144,13 @@
                             let childId = parent[i];
                             let childsChildren = modelChildrenMap[childId];
                             
-                            listContents += "<li> <a href=\"/get/model/" + modelSubModels[childId]["modelid"] + "\">" + modelSubModels[childId]["modelname"] + "</a> </li>";
+                            listContents += "<li> " + 
+                                        "<a href=\"/get/model/" + modelSubModels[childId]["modelid"] + "\">" + modelSubModels[childId]["modelname"] + "</a>" +
+                                        "<a class = 'showMoreButton' name = modelSubModels" + modelSubModels[childId]["modelid"] + "><svg id = 'modelSubModels" + modelSubModels[childId]["modelid"] + "SVG' class='infoArrow ' xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"16\" height=\"16\">> <path d=\"m 13,6 -5,5 -5,-5 z\" fill=\"#0000ff\"/></svg><a>" + 
+                                        "<div class = 'informationDiv' id = 'modelSubModels" + modelSubModels[childId]["modelid"] +"Information'>" +
+                                            modelSubModels[childId]["description"] +
+                                        "</div>" +
+                                    "</li>";
                             
                             if(childsChildren != undefined) {
                                 listContents += "<ul>" + recursiveParentChildPrint(modelChildrenMap,childsChildren, level + 1,modelSubModels)  + "</ul>";
