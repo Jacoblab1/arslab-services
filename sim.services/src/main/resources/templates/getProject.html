@@ -3,7 +3,9 @@
 <head> 
     <title>LocalHost:8080 Add Members to Project</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script th:src ="@{/javaScript/jquery-3.4.1.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
     <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
+    <script th:src ="@{/javaScript/moreInformation.js}" src = "../static/javaScript/moreInformation.js" type="application/javascript"> </script>
 </head>
 
 <body>
@@ -27,11 +29,42 @@
         </li>
     </ol>
 
+    <h4> Files</h4>
+
+    
+    <div id = "allFilesHolder"></div>
+
+
+    <div id = "fileTypeSelector" class = "fileContainer">
+        
+        <div id = "allFilesSelector" class = "fileContainerRow"> 
+            <div class = "folderImage"> 
+                <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
+            </div>
+            <div class= "fileContent">
+                Project Files
+            </div>
+            <div id = "allFilesDateModified" class = "dateCreated"></div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+      // // let modelAllFiles = [[${modelAllFiles}]];
+      //  let byte = [[${link}]];
+      //  let Id = [[${modelID}]];
+
+      //  displayAllFiles(modelAllFiles,"allFilesHolder","allFilesDateModified","modelAllFiles");
+        
+   </script>
+
     <h4>Project Models:</h4>
 
     <ol>
         <li th:each = "projectModelsMap : ${projectModels}" >
             <a th:href="@{/get/model/{id}(id=${projectModelsMap.get('modelid')})}" th:text = "${projectModelsMap.get('modelname')}  + ' (' + ${projectModelsMap.get('modelid')} + ')'"> </a>
+            <a class = "showMoreButton" th:name = "'modelProjects' + ${projectModelsMap.get('modelid')}"><svg th:id = "'modelProjects' + ${projectModelsMap.get('projectid')} + 'SVG'" class="infoArrow" xmlns="http://www.w3.org/2000/svg" version="1.1" width="16" height="16">> <path d="m 13,6 -5,5 -5,-5 z" fill="#0000ff"/></svg><a>                     
+            <div class = "informationDiv" th:id = "'modelProjects' + ${projectModelsMap.get('modelid')} +'Information'" th:text= "${projectModelsMap.get('description')}"></div>
+            
         </li>
     </ol>
 

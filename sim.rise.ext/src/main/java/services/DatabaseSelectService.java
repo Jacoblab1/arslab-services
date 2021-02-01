@@ -164,10 +164,12 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModelFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid "
 					+ " FROM \"FourthYearProject\".\"Model Files\" mf "
 					+ " inner join \"FourthYearProject\".\"Model\" m "
 					+ " on m.modelid = mf.modelid "
+					+ " inner join \"FourthYearProject\".\"Members\" m2 "
+					+ " on m2.memberid = mf.author "
 					+ " where mf.modelid = ?;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -187,12 +189,14 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModelSourceFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid "
 				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
 				+ " inner join \"FourthYearProject\".\"Model\" m "
 				+ " on m.modelid = mf.modelid "
 				+ " inner join \"FourthYearProject\".\"Source Files\" sf "
-				+ " on mf.fileid = sf.fileid"
+				+ " on mf.fileid = sf.fileid "
+				+ " inner join \"FourthYearProject\".\"Members\" m2 "
+				+ " on m2.memberid = mf.author "
 				+ " where mf.modelid = ?;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -212,12 +216,14 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModelResultFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid "
 				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
 				+ " inner join \"FourthYearProject\".\"Model\" m "
 				+ " on m.modelid = mf.modelid "
 				+ " inner join \"FourthYearProject\".\"Original Results\" or2 "
 				+ " on mf.fileid = or2.fileid"
+				+ " inner join \"FourthYearProject\".\"Members\" m2 "
+				+ "on m2.memberid = mf.author "
 				+ " where mf.modelid = ?;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -237,12 +243,14 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModelConvertedFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, mf.author, mf.modelid "
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid "
 				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
 				+ " inner join \"FourthYearProject\".\"Model\" m "
 				+ " on m.modelid = mf.modelid "
 				+ " inner join \"FourthYearProject\".\"Converted Results\" "
 				+ " cr on mf.fileid = cr.fileid"
+				+ " inner join \"FourthYearProject\".\"Members\" m2 "
+				+ "on m2.memberid = mf.author "
 				+ " where mf.modelid = ?;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
