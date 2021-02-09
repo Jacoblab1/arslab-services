@@ -229,6 +229,8 @@ public class FrontEndController implements AsyncConfigurer  {
 	
 	}
 	
+	
+	//vizulization
 	@GetMapping("/get/model/simulation/{id}")
 	@ResponseBody
 	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
@@ -278,6 +280,8 @@ public class FrontEndController implements AsyncConfigurer  {
 	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return "addMembersToProject";
 	}
+	
+	
 	
 	
 	
