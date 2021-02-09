@@ -67,6 +67,24 @@ public class FrontEndController implements AsyncConfigurer  {
      return taskExecutor;
     }
 	
+
+	@GetMapping("/get/model/simulation/{id}")
+	@ResponseBody
+	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
+		return ResponseEntity.ok().body(ModelProcessorService.getSimulation(id));
+	   	
+	}
+	
+	
+	@GetMapping("/")
+	public String homePage(Model model) {
+		ArrayList<HashMap<String, String>> models = service.getAllModels();
+		model.addAttribute("getByIdObject", new GetByIdObject());
+		model.addAttribute("modelsArrayList", models);
+		return "getModels";
+	}
+	
+
 	@GetMapping("/newMember")
 	public String greetingForm(Model model) {
 		model.addAttribute("newMember", new NewMember());
