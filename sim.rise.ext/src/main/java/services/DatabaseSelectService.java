@@ -686,9 +686,7 @@ public class DatabaseSelectService {
 		ResultSet results = null;
 	        try {
 	            connection = ConnectionFactory.getConnection();
-	            
 	            String sql = "INSERT INTO \"FourthYearProject\".\"Members\" (fname, lname) VALUES(?, ?) RETURNING \"Members\".memberid;";
-	
 				PreparedStatement pstmt = connection.prepareStatement(sql);
 				pstmt.setString(1, fname);
 	            pstmt.setString(2, lname);
