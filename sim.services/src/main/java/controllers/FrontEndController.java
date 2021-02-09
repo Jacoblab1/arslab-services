@@ -71,21 +71,10 @@ public class FrontEndController implements WebMvcConfigurer {
         registry.addMapping("/get/model/simulation/{id}").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
     }
 	
-<<<<<<< HEAD
-
 	@GetMapping("/get/model/simulation/{id}")
 	@ResponseBody
 	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
 		return ResponseEntity.ok().body(ModelProcessorService.getSimulation(id));
-=======
-	
-	@GetMapping("/get/model/simulation/{id}")
-	@ResponseBody
-	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
-		return ResponseEntity.ok().header("Access-Control-Allow-Headers", "Content-Disposition")
-	   	        .header("Access-Control-Expose-Headers", "Content-Disposition")
-	   	        .contentType(MediaType.APPLICATION_OCTET_STREAM).body(ModelProcessorService.getSimulation(id));
->>>>>>> 6aacc12bd3b642b35bc78a2d8ef4b302ff563d22
 	   	
 	}
 	
@@ -96,17 +85,6 @@ public class FrontEndController implements WebMvcConfigurer {
 		model.addAttribute("getByIdObject", new GetByIdObject());
 		model.addAttribute("modelsArrayList", models);
 		return "getModels";
-	}
-	
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> 6aacc12bd3b642b35bc78a2d8ef4b302ff563d22
-	@GetMapping("/newMember")
-	public String greetingForm(Model model) {
-		model.addAttribute("newMember", new NewMember());
-		return "newMember";
 	}
 
 	@PostMapping("/newMember")
