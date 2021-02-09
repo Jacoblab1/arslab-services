@@ -229,8 +229,6 @@ public class FrontEndController implements AsyncConfigurer  {
 	
 	}
 	
-	
-	//vizulization
 	@GetMapping("/get/model/simulation/{id}")
 	@ResponseBody
 	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
