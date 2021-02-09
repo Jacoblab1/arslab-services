@@ -6,18 +6,13 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import components.*;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +36,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import components.NewMember;
+import components.runSimulationModel;
+import components.AddMemberToProject;
+import components.AddModelToProject;
+import components.AsynchronousComponent;
+import components.GetByIdObject;
+import components.InsertNewProject;
 import services.DatabaseInsertServices;
 import services.DatabaseSelectService;
 import controllers.DatabaseSelectController;
@@ -55,7 +57,10 @@ public class FrontEndController implements AsyncConfigurer  {
 
 	private DatabaseSelectService service = new DatabaseSelectService();
 	private DatabaseInsertServices insertServices = new DatabaseInsertServices();
-
+	private HashMap<String, byte[]> zippedFiles;
+	
+	
+	
     
     @Override
     public Executor getAsyncExecutor() {
@@ -105,17 +110,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		String projectDescription = project.get("projectdescription");
 		String projectDate = project.get("creationdate");
 		
-		
-		
-		S3Controller s3 = new S3Controller();
-		ArrayList<HashMap<String,String>> files = service.getProjectsDocumentation(projectID);
-		for(int i = 0; i < files.size(); i++) {
-			
-			String url = s3.getObjectUrl(files.get(i).get("location"));
-			files.get(i).put("location", url);
-		}
-		
-		model.addAttribute("projectFiles", files);
 		model.addAttribute("projectName", projectName);
 		model.addAttribute("projectID", projectID);
 		model.addAttribute("projectDescription", projectDescription);
@@ -188,22 +182,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		String modelType = mod.get("modeltype");
 		String sourceLanguage = mod.get("sourcelanguage");
 		
-		HashMap<Integer,ArrayList<HashMap<Integer, HashMap<String,String>>>> modelParentChildMap = ModelProcessorService.sortParentChildRelationship(service.getModelChildren(modelID));
-		ArrayList<HashMap<String,String>> files = FilesProcessorService.updateFilesLocation(service.getModelFiles(modelID));
-		ArrayList<HashMap<String,String>> modelSourceFiles = FilesProcessorService.updateFilesLocation(service.getModelSourceFiles(modelID));
-		ArrayList<HashMap<String,String>> modelResultFiles = FilesProcessorService.updateFilesLocation(service.getModelResultFiles(modelID));
-		ArrayList<HashMap<String,String>> modelConvertedFiles = FilesProcessorService.updateFilesLocation(service.getModelConvertedFiles(modelID));
-		HashMap<String,ArrayList<HashMap<String,String>>>  modelSimulations = FilesProcessorService.sortFilesByAttribute(modelConvertedFiles, "simulationid");
-
-		
-		
-		
-				
-		//String diagram = "diagram.svg=https://ars-lab.s3.us-east-2.amazonaws.com/alternating_bit_protocol/convertedResults/simulations/1/diagram.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210208T145421Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=AKIAR4NSFYC2Z42ICAG7%2F20210208%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=6754222fc7d7ca656ad624f155e55212bdc3fbbe8b96046d5a2f8e6268111717";
-		//String messages = "&&messages.log=https://ars-lab.s3.us-east-2.amazonaws.com/alternating_bit_protocol/convertedResults/simulations/1/messages.log?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210208T145421Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=AKIAR4NSFYC2Z42ICAG7%2F20210208%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=23e6edd16cdf2aa5bf2c439a8d45f507eef6c6129faa87cb856574c15d8c149f";
-		//String structure = "&&structure.json=https://ars-lab.s3.us-east-2.amazonaws.com/alternating_bit_protocol/convertedResults/simulations/1/structure.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210208T145421Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=AKIAR4NSFYC2Z42ICAG7%2F20210208%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=a7c983466620594db3ddd1248f73747dd10248f2899aafe1088d26de5adb2705";
-		//url += diagram + messages + structure;
-		//System.out.print(url);
 		
 		model.addAttribute("modelName", modelName);
 		model.addAttribute("modelID", modelID);
@@ -211,16 +189,84 @@ public class FrontEndController implements AsyncConfigurer  {
 		model.addAttribute("modelDate", modelDate);
 		model.addAttribute("modelType", modelType);
 		model.addAttribute("sourceLanguage", sourceLanguage);
-		model.addAttribute("modelParentChildMap",modelParentChildMap);
+		
+		ArrayList<HashMap<String,String>> parentChildren = service.getModelChildren(modelID);
+		HashMap<Integer, HashMap<String,String>> map = new HashMap<Integer, HashMap<String,String>>();
+		HashMap<Integer,ArrayList<Integer>> h = new HashMap<Integer,ArrayList<Integer>>();
+		if(parentChildren.size() != 0) {		
+			for(int i = 0; i < parentChildren.size(); i++) {
+		
+				HashMap<String, String> parentChild = parentChildren.get(i);
+				int childID = Integer.parseInt(parentChild.get("childid"));
+				int parentID = Integer.parseInt(parentChild.get("parentid"));
+				HashMap<String, String> child = service.getModel(childID).get(0);
+				
+				ArrayList<Integer> parent = h.get(parentID);
+				if(parent == null) {
+					ArrayList<Integer> childList = new ArrayList<Integer>();
+					childList.add(childID);
+					h.put(parentID, childList);
+					
+				}else {
+					parent.add(childID);
+					h.put(parentID, parent);
+				}
+				
+				
+				
+				map.put(childID, child);
+			}
+			//System.out.print(h.get(65));
+			m(h,h.get(modelID), 0, map);
+		}
+		
+//		for (Map.Entry<Integer, HashMap<String,String>> e : treeMap.entrySet()) {
+//            System.out.println(e.getKey() 
+//                               + " "
+//                               + e.getValue().get("modelname")); 
+//		}
+		model.addAttribute("modelChildrenMap", h);
+		model.addAttribute("modelSubModels", map);
+		model.addAttribute("modelSize", map.size());
+		
+		S3Controller s3 = new S3Controller();
+		ArrayList<HashMap<String,String>> files = service.getModelFiles(modelID);
+		for(int i = 0; i < files.size(); i++) {
+			
+			String url = s3.getObjectUrl(files.get(i).get("location"));
+			files.get(i).put("location", url);
+		}
+		
+		ArrayList<HashMap<String,String>> modelSourceFiles = service.getModelSourceFiles(modelID);
+		for(int i = 0; i < modelSourceFiles.size(); i++) {
+			
+			String url = s3.getObjectUrl(modelSourceFiles.get(i).get("location"));
+			modelSourceFiles.get(i).put("location", url);
+		}
+		
+		ArrayList<HashMap<String,String>> modelResultFiles = service.getModelResultFiles(modelID);
+		for(int i = 0; i < modelResultFiles.size(); i++) {
+			
+			String url = s3.getObjectUrl(modelResultFiles.get(i).get("location"));
+			modelResultFiles.get(i).put("location", url);
+		}
+		
+		ArrayList<HashMap<String,String>> modelConvertedFiles = service.getModelConvertedFiles(modelID);
+		for(int i = 0; i < modelConvertedFiles.size(); i++) {
+			
+			String url = s3.getObjectUrl(modelConvertedFiles.get(i).get("location"));
+			modelConvertedFiles.get(i).put("location", url);
+		}
+		
+		
+		
+		
+		model.addAttribute("modelAuthors", service.getMembersFromModel(modelID));
+		model.addAttribute("modelProject", service.getModelsProjects(modelID));
 		model.addAttribute("modelAllFiles", files);
 		model.addAttribute("modelSourceFiles", modelSourceFiles);
 		model.addAttribute("modelResultFiles", modelResultFiles);
 		model.addAttribute("modelConvertedFiles", modelConvertedFiles);
-		model.addAttribute("modelAuthors", service.getMembersFromModel(modelID));
-		model.addAttribute("modelProject", service.getModelsProjects(modelID));
-		model.addAttribute("modelSimulations", ModelProcessorService.parseModelSimulations(modelSimulations));
-		
-		
 		// return the name of the html file you want to return to..... html file has to be in resources/templates
 		
 		//thread(modelID);
@@ -229,12 +275,22 @@ public class FrontEndController implements AsyncConfigurer  {
 	
 	}
 	
-	@GetMapping("/get/model/simulation/{id}")
-	@ResponseBody
-	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
-		return ResponseEntity.ok(ModelProcessorService.getSimulation(id));
-	}
 	
+	public void m(HashMap<Integer,ArrayList<Integer>> h, ArrayList<Integer> parent, int level, HashMap<Integer, HashMap<String,String>> map) {
+		
+		for(int i = 0; i < parent.size(); i++) {
+			int childId = parent.get(i);
+			ArrayList<Integer> childsChildren = h.get(childId);
+			if(childsChildren == null) {
+				
+				
+			}else {
+				m(h,childsChildren, level + 1,map);
+				
+			}
+		}
+		
+	}
 	
 	@GetMapping("/insert/project")
 	public String testInsertProject(Model model) {
@@ -353,42 +409,49 @@ public class FrontEndController implements AsyncConfigurer  {
 	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return ResponseEntity.status(HttpStatus.OK).body(h.toString());
 	}
-
+	
+	
 	@RequestMapping(value = "/zip/files", method = RequestMethod.POST)
 	@ResponseBody
 	public String zipFiles(HttpServletRequest request, Model model) {
+		//model.addAttribute("link",);
+		
 		String name = request.getParameter("Name");
-		return new String(Base64.getEncoder().encode(FilesProcessorService.getStoredFile(name)));
+		System.out.println(name);
+		S3Controller s3 = new S3Controller();
+		//byte[] b =  s3.test();
+		
+		//Convert.ToBase64String
+		//Encoder encoder = Base64.getEncoder();
+		//String encodedString = encoder.encodeToString(b);
+		//System.out.print(encodedString);
+		return new String(Base64.getEncoder().encode(zippedFiles.get(name)));
 	}
 	
-	@RequestMapping(value = "/zipModel", method = RequestMethod.POST)
+	@RequestMapping(value = "/zip", method = RequestMethod.POST)
 	@ResponseBody
-	public String zipModel(HttpServletRequest request, Model model) {
+	public String zip(HttpServletRequest request, Model model) {
     	
-		String id = request.getParameter("id");
-		int modelID = Integer.parseInt(id);
-
+		String m = request.getParameter("mod");
+		
+		System.out.println(m + "--------");
+		int modelID = Integer.parseInt(m);
+		//int modelID = ;
+		
+    	S3Controller s3 = new S3Controller();
+    	
     	ArrayList<HashMap<String,String>> files = service.getModelFiles(modelID);
     	ArrayList<HashMap<String,String>> modelSourceFiles = service.getModelSourceFiles(modelID);
 		ArrayList<HashMap<String,String>> modelResultFiles = service.getModelResultFiles(modelID);
 		ArrayList<HashMap<String,String>> modelConvertedFiles = service.getModelConvertedFiles(modelID);
-
-		FilesProcessorService.addStoredFile("modelAllFiles", FilesProcessorService.zipFiles(files));
-		FilesProcessorService.addStoredFile("modelSourceFiles", FilesProcessorService.zipFiles(modelSourceFiles));
-		FilesProcessorService.addStoredFile("modelResultFiles", FilesProcessorService.zipFiles(modelResultFiles));
-		FilesProcessorService.addStoredFile("modelConvertedFiles", FilesProcessorService.zipFiles(modelConvertedFiles));
+		
+		zippedFiles = new HashMap<String, byte[]>();
+		zippedFiles.put("modelAllFiles", s3.zipFiles(files));
+		zippedFiles.put("modelSourceFiles", s3.zipFiles(modelSourceFiles));
+		zippedFiles.put("modelResultFiles", s3.zipFiles(modelResultFiles));
+		zippedFiles.put("modelConvertedFiles", s3.zipFiles(modelConvertedFiles));
     	return "done";
     	
-    }
-	
-	@RequestMapping(value = "/zipProject", method = RequestMethod.POST)
-	@ResponseBody
-	public String zipProject(HttpServletRequest request, Model model) {
-		String id = request.getParameter("id");
-		int projectid = Integer.parseInt(id);
-    	ArrayList<HashMap<String,String>> files = FilesProcessorService.updateFilesLocation(service.getProjectsDocumentation(projectid));
-		FilesProcessorService.addStoredFile("projectAllFiles", FilesProcessorService.zipFiles(files));
-    	return "done";	
     }
 	
 	
