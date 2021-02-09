@@ -348,7 +348,7 @@ public class FrontEndController implements AsyncConfigurer  {
 		ArrayList<String> output =  application.runSimulation.run();
 		String h = " ";
 		for(String o : output) {
-			 h += o + "<br><br><br>";
+			 h += o + "<br><br><br><br>";
 		}
 	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return ResponseEntity.status(HttpStatus.OK).body(h.toString());
