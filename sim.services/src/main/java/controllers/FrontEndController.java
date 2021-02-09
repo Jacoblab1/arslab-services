@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -30,6 +31,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,11 +41,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import services.DatabaseInsertServices;
 import services.DatabaseSelectService;
 import controllers.DatabaseSelectController;
+import application.Application;
 import controllers.S3Controller;
 import sun.tools.jar.CommandLine;
 
@@ -51,11 +55,32 @@ import sun.tools.jar.CommandLine;
 @Configuration
 @EnableAsync
 @Controller
-public class FrontEndController implements AsyncConfigurer  {
+public class FrontEndController implements WebMvcConfigurer {
+	
+	
+	
 
 	private DatabaseSelectService service = new DatabaseSelectService();
 	private DatabaseInsertServices insertServices = new DatabaseInsertServices();
 
+	
+	
+	@Override
+    public void addCorsMappings(CorsRegistry registry) {
+		System.out.println("here");;
+        registry.addMapping("/get/model/simulation/{id}").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
+    }
+	
+	
+	@GetMapping("/get/model/simulation/{id}")
+	@ResponseBody
+	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
+		return ResponseEntity.ok().header("Access-Control-Allow-Headers", "Content-Disposition")
+	   	        .header("Access-Control-Expose-Headers", "Content-Disposition")
+	   	        .contentType(MediaType.APPLICATION_OCTET_STREAM).body(ModelProcessorService.getSimulation(id));
+	   	
+	}
+	
 	
 	@GetMapping("/")
 	public String homePage(Model model) {
@@ -191,11 +216,7 @@ public class FrontEndController implements AsyncConfigurer  {
 		return "displayModel";
 	}
 	
-	@GetMapping("/get/model/simulation/{id}")
-	@ResponseBody
-	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
-		return ResponseEntity.ok(ModelProcessorService.getSimulation(id));
-	}
+	
 	
 	
 	@GetMapping("/insert/project")
