@@ -8,14 +8,20 @@ import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.Executor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +40,7 @@ import components.NewMember;
 import components.runSimulationModel;
 import components.AddMemberToProject;
 import components.AddModelToProject;
+import components.AsynchronousComponent;
 import components.GetByIdObject;
 import components.InsertNewProject;
 import services.DatabaseInsertServices;
@@ -43,13 +50,27 @@ import controllers.S3Controller;
 import sun.tools.jar.CommandLine;
 
 
-
+@Configuration
 @EnableAsync
 @Controller
-public class FrontEndController {
+public class FrontEndController implements AsyncConfigurer  {
 
 	private DatabaseSelectService service = new DatabaseSelectService();
 	private DatabaseInsertServices insertServices = new DatabaseInsertServices();
+	private HashMap<String, byte[]> zippedFiles;
+	
+	
+	
+    
+    @Override
+    public Executor getAsyncExecutor() {
+     ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+     taskExecutor.setCorePoolSize(4);
+     taskExecutor.setMaxPoolSize(4);
+     taskExecutor.setQueueCapacity(50);
+     taskExecutor.initialize();
+     return taskExecutor;
+    }
 	
 	@GetMapping("/newMember")
 	public String greetingForm(Model model) {
@@ -151,6 +172,8 @@ public class FrontEndController {
 	@GetMapping("/get/model/{id}")
 	public String GetModel(@PathVariable int id, Model model) {
 		
+		
+		
 		HashMap<String, String> mod = service.getModel(id).get(0);
 		String modelName = mod.get("modelname");
 		int modelID = Integer.parseInt(mod.get("modelid"));
@@ -209,20 +232,45 @@ public class FrontEndController {
 		S3Controller s3 = new S3Controller();
 		ArrayList<HashMap<String,String>> files = service.getModelFiles(modelID);
 		for(int i = 0; i < files.size(); i++) {
-			System.out.println(files.get(i).get("location"));
+			
 			String url = s3.getObjectUrl(files.get(i).get("location"));
 			files.get(i).put("location", url);
 		}
+		
+		ArrayList<HashMap<String,String>> modelSourceFiles = service.getModelSourceFiles(modelID);
+		for(int i = 0; i < modelSourceFiles.size(); i++) {
+			
+			String url = s3.getObjectUrl(modelSourceFiles.get(i).get("location"));
+			modelSourceFiles.get(i).put("location", url);
+		}
+		
+		ArrayList<HashMap<String,String>> modelResultFiles = service.getModelResultFiles(modelID);
+		for(int i = 0; i < modelResultFiles.size(); i++) {
+			
+			String url = s3.getObjectUrl(modelResultFiles.get(i).get("location"));
+			modelResultFiles.get(i).put("location", url);
+		}
+		
+		ArrayList<HashMap<String,String>> modelConvertedFiles = service.getModelConvertedFiles(modelID);
+		for(int i = 0; i < modelConvertedFiles.size(); i++) {
+			
+			String url = s3.getObjectUrl(modelConvertedFiles.get(i).get("location"));
+			modelConvertedFiles.get(i).put("location", url);
+		}
+		
 		
 		
 		
 		model.addAttribute("modelAuthors", service.getMembersFromModel(modelID));
 		model.addAttribute("modelProject", service.getModelsProjects(modelID));
 		model.addAttribute("modelAllFiles", files);
-		model.addAttribute("modelSourceFiles", service.getModelSourceFiles(modelID));
-		model.addAttribute("modelResultFiles", service.getModelResultFiles(modelID));
-		model.addAttribute("modelConvertedFiles", service.getModelConvertedFiles(modelID));
+		model.addAttribute("modelSourceFiles", modelSourceFiles);
+		model.addAttribute("modelResultFiles", modelResultFiles);
+		model.addAttribute("modelConvertedFiles", modelConvertedFiles);
 		// return the name of the html file you want to return to..... html file has to be in resources/templates
+		
+		//thread(modelID);
+		
 		return "displayModel";
 	
 	}
@@ -367,16 +415,44 @@ public class FrontEndController {
 	@ResponseBody
 	public String zipFiles(HttpServletRequest request, Model model) {
 		//model.addAttribute("link",);
-		System.out.println(request.getParameter("modelId"));
+		
+		String name = request.getParameter("Name");
+		System.out.println(name);
 		S3Controller s3 = new S3Controller();
-		byte[] b =  s3.test();
+		//byte[] b =  s3.test();
 		
 		//Convert.ToBase64String
 		//Encoder encoder = Base64.getEncoder();
 		//String encodedString = encoder.encodeToString(b);
 		//System.out.print(encodedString);
-		return new String(Base64.getEncoder().encode(b));
+		return new String(Base64.getEncoder().encode(zippedFiles.get(name)));
 	}
+	
+	@RequestMapping(value = "/zip", method = RequestMethod.POST)
+	@ResponseBody
+	public String zip(HttpServletRequest request, Model model) {
+    	
+		String m = request.getParameter("mod");
+		
+		System.out.println(m + "--------");
+		int modelID = Integer.parseInt(m);
+		//int modelID = ;
+		
+    	S3Controller s3 = new S3Controller();
+    	
+    	ArrayList<HashMap<String,String>> files = service.getModelFiles(modelID);
+    	ArrayList<HashMap<String,String>> modelSourceFiles = service.getModelSourceFiles(modelID);
+		ArrayList<HashMap<String,String>> modelResultFiles = service.getModelResultFiles(modelID);
+		ArrayList<HashMap<String,String>> modelConvertedFiles = service.getModelConvertedFiles(modelID);
+		
+		zippedFiles = new HashMap<String, byte[]>();
+		zippedFiles.put("modelAllFiles", s3.zipFiles(files));
+		zippedFiles.put("modelSourceFiles", s3.zipFiles(modelSourceFiles));
+		zippedFiles.put("modelResultFiles", s3.zipFiles(modelResultFiles));
+		zippedFiles.put("modelConvertedFiles", s3.zipFiles(modelConvertedFiles));
+    	return "done";
+    	
+    }
 	
 	
 

@@ -7,7 +7,8 @@
 
 .fileContainer{
     display: block;
-    width: 500px;
+    width: 400px;
+    min-width: fit-content;
     margin-bottom: 16px !important;
     background-color: whitesmoke;
     border-color: black;
@@ -28,7 +29,6 @@
     padding: 16px;
     margin-top: -1px;
     list-style-type: none;
-    
     position: relative !important;
     padding-top: 8px !important;
     padding-bottom: 8px !important; 
@@ -45,13 +45,20 @@
 }
 
 .fileContent{
-   width: 100%;
+    width: 250px;
+    min-width: fit-content;
 
+}
+
+.fileAuthor{
+    width: 100px;
+    min-width: fit-content;
 }
 
 .dateCreated{
     position: relative;
     width: 140px;
+    min-width: fit-content;
     text-align: center;
     vertical-align: text-top;
 }
@@ -91,6 +98,36 @@
     top: 1px;
     left: 0px;
 }
+
+.zip{
+    display: none;
+}
+
+
+.infoArrow:hover{
+    fill: #00caee;
+    transform: scale(1.2);
+}
+
+.flipSVG:hover{
+    fill: #00caee;
+    transform: scale(1.2,-1);
+}
+
+.flipSVG{
+    transform: scale(1,-1);
+}
+
+ 
+ .informationDiv {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* number of lines to show */
+    -webkit-box-orient: vertical;
+    display: none;
+    color: black;
+ }
 
 body{
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
@@ -230,7 +267,16 @@ header a:visited {
     color:#ffffff;
 }
 
+a:visited {
+    color: blue;
+}
+
 a{
+    color: #0000ff;
+}
+
+a > *{
+    color: black;
 }
 
 
