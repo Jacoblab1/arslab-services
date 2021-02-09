@@ -185,7 +185,7 @@ public class FrontEndController implements WebMvcConfigurer {
 		ArrayList<HashMap<String,String>> files = FilesProcessorService.updateFilesLocation(service.getModelFiles(modelID));
 		ArrayList<HashMap<String,String>> modelSourceFiles = FilesProcessorService.updateFilesLocation(service.getModelSourceFiles(modelID));
 		ArrayList<HashMap<String,String>> modelResultFiles = FilesProcessorService.updateFilesLocation(service.getModelResultFiles(modelID));
-		ArrayList<HashMap<String,String>> modelConvertedFiles = FilesProcessorService.updateFilesLocation(service.getModelConvertedFiles(modelID));
+		ArrayList<HashMap<String,String>> modelConvertedFiles = service.getModelConvertedFiles(modelID);
 		HashMap<String,ArrayList<HashMap<String,String>>>  modelSimulations = FilesProcessorService.sortFilesByAttribute(modelConvertedFiles, "simulationid");
 
 		
