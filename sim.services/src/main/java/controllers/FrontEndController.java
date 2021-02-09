@@ -74,7 +74,8 @@ public class FrontEndController implements WebMvcConfigurer {
 	@GetMapping("/get/model/simulation/{id}")
 	@ResponseBody
 	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
-		return ResponseEntity.ok().body(ModelProcessorService.getSimulation(id));
+		return ResponseEntity.ok().header("Access-Control-Allow-Headers", "Content-Disposition")
+				.header("Access-Control-Expose-Headers", "Content-Disposition").body(ModelProcessorService.getSimulation(id));
 	   	
 	}
 	
