@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
@@ -30,6 +31,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,11 +41,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import services.DatabaseInsertServices;
 import services.DatabaseSelectService;
 import controllers.DatabaseSelectController;
+import application.Application;
 import controllers.S3Controller;
 import sun.tools.jar.CommandLine;
 
@@ -51,27 +55,37 @@ import sun.tools.jar.CommandLine;
 @Configuration
 @EnableAsync
 @Controller
-public class FrontEndController implements AsyncConfigurer  {
+public class FrontEndController implements WebMvcConfigurer {
+	
+	
+	
 
 	private DatabaseSelectService service = new DatabaseSelectService();
 	private DatabaseInsertServices insertServices = new DatabaseInsertServices();
 
-    
-    @Override
-    public Executor getAsyncExecutor() {
-     ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-     taskExecutor.setCorePoolSize(4);
-     taskExecutor.setMaxPoolSize(4);
-     taskExecutor.setQueueCapacity(50);
-     taskExecutor.initialize();
-     return taskExecutor;
+	
+	
+	@Override
+    public void addCorsMappings(CorsRegistry registry) {
+		System.out.println("here");;
+        registry.addMapping("/get/model/simulation/{id}").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
     }
 	
+<<<<<<< HEAD
 
 	@GetMapping("/get/model/simulation/{id}")
 	@ResponseBody
 	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
 		return ResponseEntity.ok().body(ModelProcessorService.getSimulation(id));
+=======
+	
+	@GetMapping("/get/model/simulation/{id}")
+	@ResponseBody
+	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
+		return ResponseEntity.ok().header("Access-Control-Allow-Headers", "Content-Disposition")
+	   	        .header("Access-Control-Expose-Headers", "Content-Disposition")
+	   	        .contentType(MediaType.APPLICATION_OCTET_STREAM).body(ModelProcessorService.getSimulation(id));
+>>>>>>> 6aacc12bd3b642b35bc78a2d8ef4b302ff563d22
 	   	
 	}
 	
@@ -84,7 +98,11 @@ public class FrontEndController implements AsyncConfigurer  {
 		return "getModels";
 	}
 	
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6aacc12bd3b642b35bc78a2d8ef4b302ff563d22
 	@GetMapping("/newMember")
 	public String greetingForm(Model model) {
 		model.addAttribute("newMember", new NewMember());
@@ -96,21 +114,15 @@ public class FrontEndController implements AsyncConfigurer  {
 			model.addAttribute("newMember", newMember);
 			String firstname = newMember.getFirstname();
 			String lastname = newMember.getLastname();
-			
-		//	int results = service.addMemberAccount(lastname,firstname);
-		//	newMember.setId(results);
-			
 			return "result";
 	}
 	
 	// this wil be the inital function called when loading the page
 	@GetMapping("/get/projects")
 	public String testGetProject(Model model) {
-		// the name here will be its name in the html docutment ${"GetByIdObject"}
 		ArrayList<HashMap<String, String>> projects = service.getAllProjects();
 		model.addAttribute("getByIdObject", new GetByIdObject());
 		model.addAttribute("projectsArrayList", projects);
-	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return "getProjects";
 	}
 	
@@ -122,16 +134,7 @@ public class FrontEndController implements AsyncConfigurer  {
 		int projectID = Integer.parseInt(project.get("projectid"));
 		String projectDescription = project.get("projectdescription");
 		String projectDate = project.get("creationdate");
-		
-		
-		
-		S3Controller s3 = new S3Controller();
-		ArrayList<HashMap<String,String>> files = service.getProjectsDocumentation(projectID);
-		for(int i = 0; i < files.size(); i++) {
-			
-			String url = s3.getObjectUrl(files.get(i).get("location"));
-			files.get(i).put("location", url);
-		}
+		ArrayList<HashMap<String,String>> files = FilesProcessorService.updateFilesLocation(service.getProjectsDocumentation(projectID));
 		
 		model.addAttribute("projectFiles", files);
 		model.addAttribute("projectName", projectName);
@@ -142,10 +145,7 @@ public class FrontEndController implements AsyncConfigurer  {
 		model.addAttribute("projectModels", service.getProjectsModel(id));
 		// return the name of the html file you want to return to..... html file has to be in resources/templates
 		return "getProject";
-	
 	}
-	
-
 	
 	// this is the function that will be called when the form is submited
 	@PostMapping("/get/projects")
@@ -168,11 +168,9 @@ public class FrontEndController implements AsyncConfigurer  {
 	
 	@GetMapping("/get/models")
 	public String GetModels(Model model) {
-		// the name here will be its name in the html docutment ${"GetByIdObject"}
 		ArrayList<HashMap<String, String>> models = service.getAllModels();
 		model.addAttribute("getByIdObject", new GetByIdObject());
 		model.addAttribute("modelsArrayList", models);
-	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return "getModels";
 	}
 	
@@ -196,8 +194,6 @@ public class FrontEndController implements AsyncConfigurer  {
 	@GetMapping("/get/model/{id}")
 	public String GetModel(@PathVariable int id, Model model) {
 		
-		
-		
 		HashMap<String, String> mod = service.getModel(id).get(0);
 		String modelName = mod.get("modelname");
 		int modelID = Integer.parseInt(mod.get("modelid"));
@@ -214,15 +210,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		HashMap<String,ArrayList<HashMap<String,String>>>  modelSimulations = FilesProcessorService.sortFilesByAttribute(modelConvertedFiles, "simulationid");
 
 		
-		
-		
-				
-		//String diagram = "diagram.svg=https://ars-lab.s3.us-east-2.amazonaws.com/alternating_bit_protocol/convertedResults/simulations/1/diagram.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210208T145421Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=AKIAR4NSFYC2Z42ICAG7%2F20210208%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=6754222fc7d7ca656ad624f155e55212bdc3fbbe8b96046d5a2f8e6268111717";
-		//String messages = "&&messages.log=https://ars-lab.s3.us-east-2.amazonaws.com/alternating_bit_protocol/convertedResults/simulations/1/messages.log?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210208T145421Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=AKIAR4NSFYC2Z42ICAG7%2F20210208%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=23e6edd16cdf2aa5bf2c439a8d45f507eef6c6129faa87cb856574c15d8c149f";
-		//String structure = "&&structure.json=https://ars-lab.s3.us-east-2.amazonaws.com/alternating_bit_protocol/convertedResults/simulations/1/structure.json?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20210208T145421Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=AKIAR4NSFYC2Z42ICAG7%2F20210208%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Signature=a7c983466620594db3ddd1248f73747dd10248f2899aafe1088d26de5adb2705";
-		//url += diagram + messages + structure;
-		//System.out.print(url);
-		
 		model.addAttribute("modelName", modelName);
 		model.addAttribute("modelID", modelID);
 		model.addAttribute("modelDescription", modelDescription);
@@ -238,20 +225,10 @@ public class FrontEndController implements AsyncConfigurer  {
 		model.addAttribute("modelProject", service.getModelsProjects(modelID));
 		model.addAttribute("modelSimulations", ModelProcessorService.parseModelSimulations(modelSimulations));
 		
-		
-		// return the name of the html file you want to return to..... html file has to be in resources/templates
-		
-		//thread(modelID);
-		
 		return "displayModel";
-	
 	}
 	
-	@GetMapping("/get/model/simulation/{id}")
-	@ResponseBody
-	public ResponseEntity<HashMap<String,String>> getSimulationJSON(@PathVariable String id) {
-		return ResponseEntity.ok(ModelProcessorService.getSimulation(id));
-	}
+	
 	
 	
 	@GetMapping("/insert/project")
@@ -296,12 +273,7 @@ public class FrontEndController implements AsyncConfigurer  {
 	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return "addMembersToProject";
 	}
-	
-	
-	
-	
-	
-	
+
 	@PostMapping("/insert/membersToProject")
 	public String addMembersToProject(
 			@RequestParam(value = "add", required = false) String add,
@@ -317,7 +289,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		return "redirect:/insert/modelsToProject/" + projectId;
 	}
 	
-
 	@PostMapping("/insert/modelsToProject")
 	public String addModelsToProject(
 			@RequestParam(value = "add", required = false) String add,
@@ -346,7 +317,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		model.addAttribute("addModelToProject", new AddModelToProject(id,projectName));
 		model.addAttribute("currentModels", service.getProjectsModel(id));
 		model.addAttribute("modelsMap", service.getAllModelsNotInProject(id));
-	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return "addModelsToProject";
 	}
 	
@@ -357,7 +327,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		model.addAttribute("runSimulation", new runSimulationModel());
 		model.addAttribute("models", service.getModel(70));
 		model.addAttribute("modelsSimulations", service.getModelSourceFiles(70));
-	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return "runModel.html";
 	}
 	
@@ -370,7 +339,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		for(String o : output) {
 			 h += o + "<br><br><br><br>";
 		}
-	// return the html page that contains to form 	..... html file has to be in resources/templates
 		return ResponseEntity.status(HttpStatus.OK).body(h.toString());
 	}
 
@@ -410,13 +378,6 @@ public class FrontEndController implements AsyncConfigurer  {
 		FilesProcessorService.addStoredFile("projectAllFiles", FilesProcessorService.zipFiles(files));
     	return "done";	
     }
-	
-	
-
-	
-	
-	
-	
 
 }
 
