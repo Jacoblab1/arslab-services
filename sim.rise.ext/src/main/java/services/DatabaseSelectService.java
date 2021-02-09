@@ -243,7 +243,7 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModelConvertedFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid "
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid, cr.simulationid "
 				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
 				+ " inner join \"FourthYearProject\".\"Model\" m "
 				+ " on m.modelid = mf.modelid "
@@ -457,21 +457,24 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModelChildren(int modelID){		
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "with recursive cte_model as ("
-					+ "	select m2.parentid, m2.childid, 1 lev  from \"FourthYearProject\".\"Model Children\" m2 "
-					+ "	where m2.parentid = ?"
-					+ "	union all"
-					+ "	select mc.parentid, mc.childid, cte_model.lev+1 lev from cte_model"
-					+ "	inner join \"FourthYearProject\".\"Model Children\" mc "
-					+ "	on mc.parentid = cte_model.childid\r\n"
-					+ " )"
-					+ " SELECT cte_model.parentid, pm.modelname parentName, cte_model.childid, cm.modelname childName, cte_model.lev as level"
-					+ " FROM cte_model"
-					+ " inner join \"FourthYearProject\".\"Model\" pm"
-					+ " on pm.modelid = cte_model.parentid"
-					+ " inner join \"FourthYearProject\".\"Model\" cm"
-					+ " on cm.modelid = cte_model.childid"
-					+ " ORDER BY lev, childname ASC;";
+		String sql = "with recursive cte_model as ( "
+				+ "	select m2.parentid, m2.childid, 1 lev  from \"FourthYearProject\".\"Model Children\" m2 "
+				+ "	where m2.parentid = ? " 
+				+ "	union all "
+				+ "	select mc.parentid, mc.childid, cte_model.lev+1 lev from cte_model "
+				+ "	inner join \"FourthYearProject\".\"Model Children\" mc "
+				+ "	on mc.parentid = cte_model.childid "
+				+ " ) "
+				+ " "
+				+ " SELECT cte_model.parentid, pm.modelname parentName, cm.modelid, cm.modelname, cm.description, cm.creationdate, mt.modeltypename , cm.sourcelanguage, cte_model.lev as level "
+				+ " FROM cte_model "
+				+ " inner join \"FourthYearProject\".\"Model\" pm "
+				+ " on pm.modelid = cte_model.parentid  "
+				+ " inner join \"FourthYearProject\".\"Model\" cm "
+				+ " on cm.modelid = cte_model.childid  "
+				+ " inner join \"FourthYearProject\".\"ModelType\" mt "
+				+ " on cm.modeltype = mt.modeltypeid  "
+				+ " ORDER BY lev, modelname asc ";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setInt(1, modelID);
@@ -489,7 +492,7 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getAllConvertedResults(){		
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT fileid, originalid, convertedid FROM \"FourthYearProject\".\"Converted Results\" order by convertedid;";
+		String sql = "SELECT fileid, originalid, convertedid, simulationid FROM \"FourthYearProject\".\"Converted Results\" order by convertedid;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			resultsArray = parseResults(pstmt.executeQuery());

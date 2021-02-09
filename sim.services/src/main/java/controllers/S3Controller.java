@@ -23,28 +23,18 @@ import org.springframework.scheduling.annotation.Async;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSSessionCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-//import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.Bucket;
-
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.transfer.TransferManager;
 
 import services.DatabaseSelectService;
-
-
-
-import java.util.List;
-
-
-
 
 public class S3Controller {
 	
@@ -74,6 +64,8 @@ public class S3Controller {
 		
 		// This is the name of the bucket files are stored in
 		bucketName = "ars-lab";
+		
+		
 	}
 	
 	
