@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script th:src ="@{/javaScript/jquery-3.4.1.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
     <link th:href="@{/css/main.css}" type="text/css" rel="stylesheet">
+    <script th:src ="@{/javaScript/displayFiles.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
     <script th:src ="@{/javaScript/moreInformation.js}" src = "../static/javaScript/moreInformation.js" type="application/javascript"> </script>
 </head>
 
@@ -49,11 +50,10 @@
     </div>
 
     <script th:inline="javascript">
-      // // let modelAllFiles = [[${modelAllFiles}]];
-      //  let byte = [[${link}]];
-      //  let Id = [[${modelID}]];
-
-      //  displayAllFiles(modelAllFiles,"allFilesHolder","allFilesDateModified","modelAllFiles");
+       let modelAllFiles = [[${projectFiles}]];
+        let Id = [[${projectID}]];
+        let type = "Project";
+       displayAllFiles(modelAllFiles,"allFilesHolder","allFilesDateModified","projectAllFiles");
         
    </script>
 
