@@ -243,7 +243,7 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getModelConvertedFiles(int modelID) {
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid, cr.simulationid "
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, concat_ws(' ',m2.fname, m2.lname) as author, mf.modelid, cr.\"visualizationNumber\" "
 				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
 				+ " inner join \"FourthYearProject\".\"Model\" m "
 				+ " on m.modelid = mf.modelid "
