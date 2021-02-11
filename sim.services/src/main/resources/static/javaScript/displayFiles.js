@@ -225,9 +225,9 @@ $(function(){
     $(".runSimulation").click(function (event){
         var name = event.currentTarget.getAttribute('name');
         console.log(name + "hello");
-        $('#iframe').show();
+       // $('#iframe').show();
       //  $('#devsWebView').attr('src', "http://localhost/");
-        $('#devsWebView').attr('src', "http://206.12.94.204:8080/arslab-web/1.4/app-embed/index.html?id=" + name);
+      //  $('#devsWebView').attr('src', "http://206.12.94.204:8080/arslab-web/1.4/app-embed/index.html?id=" + name);
        // reSizeIfram();
     });
 
