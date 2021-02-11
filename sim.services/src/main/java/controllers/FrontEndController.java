@@ -48,7 +48,6 @@ import services.DatabaseInsertServices;
 import services.DatabaseSelectService;
 import controllers.DatabaseSelectController;
 import application.Application;
-import controllers.S3Controller;
 import sun.tools.jar.CommandLine;
 
 
@@ -113,7 +112,7 @@ public class FrontEndController implements WebMvcConfigurer {
 		int projectID = Integer.parseInt(project.get("projectid"));
 		String projectDescription = project.get("projectdescription");
 		String projectDate = project.get("creationdate");
-		ArrayList<HashMap<String,String>> files = FilesProcessorService.updateFilesLocation(service.getProjectsDocumentation(projectID));
+		ArrayList<HashMap<String,String>> files = service.getProjectsDocumentation(projectID);
 		
 		model.addAttribute("projectFiles", files);
 		model.addAttribute("projectName", projectName);
@@ -182,9 +181,9 @@ public class FrontEndController implements WebMvcConfigurer {
 		String sourceLanguage = mod.get("sourcelanguage");
 		
 		HashMap<Integer,ArrayList<HashMap<Integer, HashMap<String,String>>>> modelParentChildMap = ModelProcessorService.sortParentChildRelationship(service.getModelChildren(modelID));
-		ArrayList<HashMap<String,String>> files = FilesProcessorService.updateFilesLocation(service.getModelFiles(modelID));
-		ArrayList<HashMap<String,String>> modelSourceFiles = FilesProcessorService.updateFilesLocation(service.getModelSourceFiles(modelID));
-		ArrayList<HashMap<String,String>> modelResultFiles = FilesProcessorService.updateFilesLocation(service.getModelResultFiles(modelID));
+		ArrayList<HashMap<String,String>> files = service.getModelFiles(modelID);
+		ArrayList<HashMap<String,String>> modelSourceFiles = service.getModelSourceFiles(modelID);
+		ArrayList<HashMap<String,String>> modelResultFiles = service.getModelResultFiles(modelID);
 		ArrayList<HashMap<String,String>> modelConvertedFiles = service.getModelConvertedFiles(modelID);
 		HashMap<String,ArrayList<HashMap<String,String>>>  modelSimulations = FilesProcessorService.sortFilesByAttribute(modelConvertedFiles, "visualizationNumber");
 
@@ -353,7 +352,7 @@ public class FrontEndController implements WebMvcConfigurer {
 	public String zipProject(HttpServletRequest request, Model model) {
 		String id = request.getParameter("id");
 		int projectid = Integer.parseInt(id);
-    	ArrayList<HashMap<String,String>> files = FilesProcessorService.updateFilesLocation(service.getProjectsDocumentation(projectid));
+    	ArrayList<HashMap<String,String>> files = service.getProjectsDocumentation(projectid);
 		FilesProcessorService.addStoredFile("projectAllFiles", FilesProcessorService.zipFiles(files));
     	return "done";	
     }

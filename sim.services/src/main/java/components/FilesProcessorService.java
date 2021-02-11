@@ -1,12 +1,10 @@
 package components;
 
-import controllers.S3Controller;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -14,12 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 public class FilesProcessorService {
 
-	private static S3Controller s3Controller = new S3Controller();
 	private static HashMap<String, byte[]> storedFiles = new HashMap<String, byte[]>();
-
-	public static String getFileURL(String key) {
-		return s3Controller.getObjectUrl(key);
-	}
 
 	public static byte[] zipFiles(ArrayList<HashMap<String, String>> files) {
 		try {
@@ -28,12 +21,22 @@ public class FilesProcessorService {
 			InputStream is;
 			for (int i = 0; i < files.size(); i++) {
 				// get the files download location from S3 specified by the location key
-				String location = s3Controller.getObjectUrl(files.get(i).get("location"));
+				
+				String location = files.get(i).get("location");
 				//open the files location
 				URL url = new URL(location);
 				is = url.openStream();
-				//add the file name to the zip archive
-				zip.putNextEntry(new ZipEntry(files.get(i).get("location")));
+				
+				
+				String fileLocation[] = location.split("files/", 2);
+				String fileName[];
+				if(fileLocation.length > 1) {
+					fileName = fileLocation[1].split("/");
+				}else {
+					fileName = fileLocation[0].split("/");
+				}
+				String filepath = String.join("/",(Arrays.copyOfRange(fileName, 1, fileName.length)));
+				zip.putNextEntry(new ZipEntry(filepath.replace("%20", " ")));
 
 				int length;
 				byte[] b = new byte[2048];
@@ -54,14 +57,7 @@ public class FilesProcessorService {
 		return null;
 	}
 
-	public static ArrayList<HashMap<String, String>> updateFilesLocation(ArrayList<HashMap<String, String>> files) {
-
-		for (int i = 0; i < files.size(); i++) {
-			String url = s3Controller.getObjectUrl(files.get(i).get("location"));
-			files.get(i).put("location", url);
-		}
-		return files;
-	}
+	
 
 	public static HashMap<String,ArrayList<HashMap<String,String>>> sortFilesByAttribute(ArrayList<HashMap<String, String>> files, String attribute) {
 		HashMap<String,ArrayList<HashMap<String,String>>> sortedFiles = new HashMap<String,ArrayList<HashMap<String,String>>>();

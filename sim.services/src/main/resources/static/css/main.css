@@ -97,6 +97,19 @@
     left: 0px;
 }
 
+#iframe{
+height: fit-content;
+width: fit-content;
+border: solid black 3px;
+
+}
+
+#devsWebView{
+    width: 1000px;
+    height: 500px;
+}
+
+
 .zip{
     display: none;
 }

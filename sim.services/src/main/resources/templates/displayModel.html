@@ -8,6 +8,12 @@
     <script th:src ="@{/javaScript/displayFiles.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
     <script th:src ="@{/javaScript/FileSaver.js}" src = "../static/javaScript/FileSaver.js" type="application/javascript"> </script>
     <script th:src ="@{/javaScript/moreInformation.js}" src = "../static/javaScript/moreInformation.js" type="application/javascript"> </script>  
+    <script type='module'>
+        import WDSV from 'http://206.12.94.204:8080/arslab-web/1.4/app-embed/WDSV.js';
+           var viewer = new WDSV(document.body, { id:1 });
+           viewer.On("Error", (error) => alert(error.toString()));
+   </script>
+
 </head>
 
 <body>
@@ -53,7 +59,8 @@
             <div>
                 <div id = "simulationsHolder"></div>
                 <div id = "iframe" hidden>
-                    <iframe id = "devsWebView" height="475" width="800" style="border:none;" src = "http://206.12.94.204:8080/arslab-web/1.3/app-simple/index.html" ></iframe>   
+                   
+                    <iframe id = "devsWebView"  src = "http://206.12.94.204:8080/arslab-web/1.3/app-simple/index.html" ></iframe>   
                 </div>
             </div>
             
