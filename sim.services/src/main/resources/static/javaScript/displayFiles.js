@@ -1,4 +1,12 @@
 
+
+function showView(){
+        
+        // debugger
+        // var node = document.body.querySelector('#viewer-div');
+        // var viewer = new WDSV(node, { id:1 });
+        // viewer.On("Error", (error) => alert(error.toString()));
+}
 function displayAllFiles(allFiles,containerID, dateID, name){
     let fileContainer = document.createElement("div");
     fileContainer.className = "fileContainer";
@@ -80,9 +88,6 @@ function displayAllFiles(allFiles,containerID, dateID, name){
     document.getElementById(containerID).appendChild(fileContainer);
    
    }
-
-
-
    function processSimulations(modelSimulations){
         let fileContainer = document.createElement("div");
         fileContainer.className = "fileContainer";
@@ -147,10 +152,6 @@ function displayAllFiles(allFiles,containerID, dateID, name){
     document.getElementById("simulationsHolder").appendChild(fileContainer);
    
    }
-
-   
-
-
    function base64ToArrayBuffer(base64) {
     var binaryString = window.atob(base64);
     var binaryLen = binaryString.length;
@@ -162,83 +163,27 @@ function displayAllFiles(allFiles,containerID, dateID, name){
     return bytes;
 }
 
-// var a;
-
-// window.addEventListener('message', event => {
-//         a = event.data;
-//         console.log(a);
-//         let keys = Object.keys(a);
-//         var iFrame = document.getElementById( 'devsWebView' );
-//         for(key of keys){
-//             console.log(key);
-//             console.log(a[key]);
-//             if(key == "width"){
-//                 iFrame.width = a[key];
-//             }else if(key == "height"){
-//                 iFrame.height =a[key];
-//             }   
-//         }
- 
-//     //    console.log($('#devsWebView'));
-// }); 
-
-// function reSizeIfram(){
-//     var iFrame = document.getElementById( 'devsWebView' );
-//     console.log("here");
-//     iFrame.contentWindow.postMessage("width", 'http://localhost/');
-//     //document.body.scrollWidth
-//   //  $('#devsWebView').attr('width', a);
-//     //iFrame.width = a;
-//     iFrame.contentWindow.postMessage("height", 'http://localhost/');
-//     //document.body.scrollHeight
-//   //  iFrame.height = a;
-//    // $('#devsWebView').attr('height', a);
-//    // console.log(iFrame);
-
-    
-
-   
-
-
-//     //iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
-//    // iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
-// }
-
-
-
-
-
 $(function(){
-
-    
-
     $(document).ready(function() {
         var data = {
             id: Id,
         };
-
         $.post("/zip" + type, $.param(data), function(d) {
             $(".zip").show();
         });
     });
 
-    $(".runSimulation").click(function (event){
-        var name = event.currentTarget.getAttribute('name');
-        console.log(name + "hello");
-       // $('#iframe').show();
-      //  $('#devsWebView').attr('src', "http://localhost/");
-      //  $('#devsWebView').attr('src', "http://206.12.94.204:8080/arslab-web/1.4/app-embed/index.html?id=" + name);
-       // reSizeIfram();
-    });
-
-    
-
-    $('#devsWebView').on("load", function() {
-       // reSizeIfram();
-    });
+    // $(".runSimulation").click(function (event){
+    //     var name = event.currentTarget.getAttribute('name');
+    //     console.log(name + "hello");
+       
+    // });
 
 
 
+
+
+   
     $(".zip").click(function (event){
         event.stopPropagation();
         var name = event.currentTarget.getAttribute('name');
@@ -261,7 +206,6 @@ $(function(){
         $( '#fileTypeSelector' ).hide();
         
     });
-
 
     $('#allFilesSelector').click(function (event) {
         $( '#allFilesHolder' ).show();
@@ -304,7 +248,6 @@ $(function(){
         $('#iframe').hide();
     });
 
-
     $('.backButton').click(function () {
         $( '#simulationsHolder' ).hide();
         $( '#allFilesHolder' ).hide();
@@ -312,15 +255,9 @@ $(function(){
         $( '#resultFilesHolder' ).hide();
         $( '#convertedFilesHolder' ).hide();
         $( '#fileTypeSelector' ).show();
-        $('#iframe').hide();
-        
-    });
-
-    
-    
+        $('#iframe').hide(); 
+    });  
 });
-
-
 
 function saveByteArray(byte) {
 
@@ -356,5 +293,3 @@ const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
     const blob = new Blob(byteArrays, {type: contentType});
     return blob;
 }
-
-

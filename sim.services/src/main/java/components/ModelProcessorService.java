@@ -1,6 +1,7 @@
 package components;
 
 import controllers.S3Controller;
+import services.DatabaseSelectService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -21,7 +22,6 @@ import org.json.JSONString;
 public class ModelProcessorService {
 
 	
-	public static HashMap<String,HashMap<String,String>> storedModelSimulations;	
 	public static HashMap<Integer,ArrayList<HashMap<Integer, HashMap<String,String>>>> sortParentChildRelationship(ArrayList<HashMap<String,String>> modelsChildren) {
 		
 		HashMap<Integer,ArrayList<HashMap<Integer, HashMap<String,String>>>> modelsListOfChildren = new HashMap<Integer,ArrayList<HashMap<Integer, HashMap<String,String>>>>();
@@ -46,34 +46,25 @@ public class ModelProcessorService {
 	}
 	
 	public static ArrayList<String> parseModelSimulations(HashMap<String,ArrayList<HashMap<String,String>>>  modelSimulations) {
-		
-		
-		storedModelSimulations = new HashMap<String,HashMap<String,String>>();
 		ArrayList<String> simulationIds = new ArrayList<String>();
-		
-		
 		for(String key : modelSimulations.keySet()) {
 			if(!key.equals("everyThingElse")) {
-				ArrayList<HashMap<String,String>> simulationFiles = modelSimulations.get(key);
-				JSONArray jsonArray = new JSONArray();
-				HashMap<String,String> simulations = new HashMap<String,String>();
-				for(HashMap<String,String> simulationFile : simulationFiles) {
-					simulations.put(simulationFile.get("name"),simulationFile.get("location"));
-				}
-				jsonArray.put(simulations);
-			
-				//storedModelSimulations.put(key,jsonArray.get(0).toString());
-				storedModelSimulations.put(key,simulations);
 				simulationIds.add(key);
 			}
-		
 		}
 		return simulationIds;
 	}
 	
 	public static HashMap<String,String> getSimulation(String id) {
-		System.out.println(storedModelSimulations);
-		return storedModelSimulations.get(id);
+		DatabaseSelectService dbService = new DatabaseSelectService();
+		ArrayList<HashMap<String,String>> simulationFiles = dbService.getSimulation(Integer.parseInt(id));
+		JSONArray jsonArray = new JSONArray();
+		HashMap<String,String> simulations = new HashMap<String,String>();
+		for(HashMap<String,String> simulationFile : simulationFiles) {
+			simulations.put(simulationFile.get("name"),simulationFile.get("location"));
+		}
+		
+		return simulations;
 	}
 
 	

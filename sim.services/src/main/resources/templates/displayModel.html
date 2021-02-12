@@ -3,20 +3,37 @@
 <head> 
     <title>Display Model</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <script th:src ="@{/javaScript/jquery-3.4.1.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
+    <script th:src ="@{/javaScript/jquery-3.4.1.js}"  type="application/javascript"> </script>
     <link th:href="@{/css/main.css}" href="../static/css/main.css" type="text/css" rel="stylesheet">
-    <script th:src ="@{/javaScript/displayFiles.js}" src = "../static/javaScript/displayFiles.js" type="application/javascript"> </script>
+    <script type="application/javascript" th:src ="@{/javaScript/displayFiles.js}" src = "../static/javaScript/displayFiles.js"> </script>
     <script th:src ="@{/javaScript/FileSaver.js}" src = "../static/javaScript/FileSaver.js" type="application/javascript"> </script>
     <script th:src ="@{/javaScript/moreInformation.js}" src = "../static/javaScript/moreInformation.js" type="application/javascript"> </script>  
     
-    <script type='module'>
-        
-        import WDSV from 'http://206.12.94.204:8080/arslab-web/1.4/app-embed/WDSV.js';
-        var node = document.body.querySelector('#viewer-div');
-        var viewer = new WDSV(node, { id:1 });
-        viewer.On("Error", (error) => alert(error.toString()));
-    </script>
 
+    <link rel="stylesheet" href="http://206.12.94.204:8080/arslab-web/1.4/api-web-devs/api-web-devs.css">
+    <link rel="stylesheet" href="http://206.12.94.204:8080/arslab-web/1.4/app-embed/application.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+    <script async crossorigin="anonymous" type="module">
+
+        import WDSV from 'http://206.12.94.204:8080/arslab-web/1.4/app-embed/WDSV.js';
+
+        $(".runSimulation").click(function (event){
+            var name = event.currentTarget.getAttribute('name');
+            var node = document.body.querySelector('#viewer-div');
+            var viewer = new WDSV(node, { id:name });
+            viewer.On("Error", (error) => alert(error.toString()));
+        });
+      //  showView();
+       // $('#iframe').show();
+      //  $('#devsWebView').attr('src', "http://localhost/");
+      //  $('#devsWebView').attr('src', "http://206.12.94.204:8080/arslab-web/1.4/app-embed/index.html?id=" + name);
+       // reSizeIfram();
+   
+
+
+        
+    </script>
 </head>
 
 <body>
@@ -61,7 +78,7 @@
             <div id = "resultFilesHolder"></div>
             <div id = "viewer-div">
                 <div id = "simulationsHolder">
-                    
+
                 </div><!--
                 <div id = "iframe" hidden>
                    

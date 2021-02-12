@@ -238,6 +238,29 @@ public class DatabaseSelectService {
 		
 		return resultsArray;
 	}
+	
+	
+	public ArrayList <HashMap<String,String>> getSimulation(int simulationId) {
+		Connection connection = ConnectionFactory.getConnection();
+		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
+		String sql = "SELECT mf.fileid, mf.\"name\", mf.\"type\", mf.\"location\", mf.created, mf.description, cr.\"visualizationNumber\" "
+				+ " FROM \"FourthYearProject\".\"Model Files\" mf "
+				+ " inner join \"FourthYearProject\".\"Converted Results\" cr "
+				+ " on cr.fileid = mf.fileid "
+				+ " where cr.\"visualizationNumber\" = ?;";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, simulationId);
+			resultsArray = parseResults(pstmt.executeQuery());
+		} catch (SQLException e) {
+			System.out.println("SQLException in getProject()");
+			e.printStackTrace();
+		} finally {
+			DbUtil.close(connection);
+		}
+		
+		return resultsArray;
+	}
 
 	//return a model's converted files
 	public ArrayList <HashMap<String,String>> getModelConvertedFiles(int modelID) {
@@ -526,7 +549,7 @@ public class DatabaseSelectService {
 	public ArrayList <HashMap<String,String>> getAllModels(){		
 		Connection connection = ConnectionFactory.getConnection();
 		ArrayList<HashMap<String,String>> resultsArray = new ArrayList<HashMap<String,String>>();
-		String sql = "SELECT modelid, modelname, description, creationdate, modeltype, sourcelanguage FROM \"FourthYearProject\".\"Model\" order by modelid;";
+		String sql = "SELECT modelid, modelname, description, creationdate, modeltype, sourcelanguage FROM \"FourthYearProject\".\"Model\" order by modelname;";
 		try {
 			PreparedStatement pstmt = connection.prepareStatement(sql);
 			resultsArray = parseResults(pstmt.executeQuery());
