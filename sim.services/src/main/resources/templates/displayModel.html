@@ -24,7 +24,7 @@
             var name = event.currentTarget.getAttribute('name');
             var node = document.body.querySelector('#viewer-div');
             var viewer = new WDSV(node, { id:name });
-            viewer.On("Error", (error) => alert(error.toString()));
+            viewer.On("Error", (event) => alert(event.error.toString()));
         });
       //  showView();
        // $('#iframe').show();
