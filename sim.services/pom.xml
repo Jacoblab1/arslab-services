@@ -55,12 +55,19 @@
 			<artifactId>sim.parsing</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>sim.rise.ext</groupId>
 			<artifactId>sim.rise.ext</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
+		<!-- OpenAPI definitions and Swagger UI (OpenAPI visualization) -->
+		<dependency>
+            		<groupId>org.springdoc</groupId>
+            		<artifactId>springdoc-openapi-ui</artifactId>
+            		<version>1.5.5</version>
+        	</dependency>
+		
 	</dependencies>
 	
 	<build>
