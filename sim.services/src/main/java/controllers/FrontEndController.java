@@ -133,7 +133,7 @@ public class FrontEndController implements WebMvcConfigurer {
 			int id = getByIdObject.getId();
 			
 			if(add != null) {
-				if(add.equals("View All Models")) {
+				if(add.equals("Select a Model")) {
 				return "redirect:/get/models";
 				}
 			}
@@ -159,7 +159,7 @@ public class FrontEndController implements WebMvcConfigurer {
 		
 		int id = getByIdObject.getId();	
 		if(add != null) {
-			if(add.equals("View All Projects")) {
+			if(add.equals("Select a Project")) {
 			return "redirect:/get/projects";
 			}
 		}
