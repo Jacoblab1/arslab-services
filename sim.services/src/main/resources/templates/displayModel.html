@@ -48,24 +48,24 @@
     <main id ="main">
         <div class = groupTitle>
             <h1 th:utext="${modelName}" ></h1>
-            <p> <em th:text="'Model ID:' + ${modelID}"></em></p>
+            <p> <em th:text="'Model ID: ' + ${modelID}"></em></p>
         </div>
         <div class = "itemInformation">
             
             <div class = "itemDescription">
-                <h4>About this Model:</h4>
+                <h4>About this model:</h4>
                 <p th:utext=" ${modelDescription}"> </p>
                 <p>
                     Inputs: <em>n/a</em><br>
                     Outputs: <em>n/a</em><br>
-                    Model Type: <em th:text="${modelType}"></em><br>
-                    Source Language: <em th:text="${sourceLanguage}"></em>
+                    Model type: <em th:text="${modelType}"></em><br>
+                    Source language: <em th:text="${sourceLanguage}"></em>
                 </p>
                 <p>Created: <em th:text="${modelDate}"></em></p>
             </div>
 
             <div class = "itemAuthors">
-                <h4>Model Authors:</h4>
+                <h4>Model authors:</h4>
                 <ol>
                     <li th:each = "modelMembersMap : ${modelAuthors}" >
                         <a href="#" th:text = "${modelMembersMap.get('fname')}  + ' ' + ${modelMembersMap.get('lname')} + ' (' + ${modelMembersMap.get('memberid')} + ')'"> </a>
@@ -74,7 +74,7 @@
             </div>
             
 
-            <h4> Files</h4>
+            <h4> Files:</h4>
 
             
             <div class = "bodyDiv" id = "allFilesHolder"></div>
@@ -103,8 +103,8 @@
                     <div class = "folderImage"> 
                         <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
                     </div>
-                    <div class= "fileContent">
-                        All Files
+                    <div class= "fileContent" style="color: blue; cursor: pointer">
+                        All files
                     </div>
                     <div id = "allFilesDateModified" class = "dateCreated"></div>
                 </div>
@@ -113,8 +113,8 @@
                     <div class = "folderImage"> 
                         <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
                     </div>
-                    <div class= "fileContent">
-                        Source Files
+                    <div class= "fileContent" style="color: blue; cursor: pointer">
+                        Source files
                     </div>
                     <div id = "sourceDateModified" class = "dateCreated"></div>
                 </div>
@@ -122,8 +122,8 @@
                     <div class = "folderImage"> 
                         <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
                     </div>
-                    <div class= "fileContent">
-                        Original Result Files
+                    <div class= "fileContent" style="color: blue; cursor: pointer">
+                        Original results files
                     </div>
                     <div id = "convertedDateModified" class = "dateCreated"></div>
                 </div>
@@ -131,8 +131,8 @@
                     <div class = "folderImage"> 
                         <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
                     </div>
-                    <div class= "fileContent">
-                        Converted Results Files
+                    <div class= "fileContent" style="color: blue; cursor: pointer">
+                        Converted results files
                     </div>
                     <div id = "resultDateModified" class = "dateCreated"></div>
                 </div>
@@ -140,7 +140,7 @@
                     <div class = "folderImage"> 
                         <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
                     </div>
-                    <div class= "fileContent">
+                    <div class= "fileContent" style="color: blue; cursor: pointer">
                         Simulations
                     </div>
                     <div id = "resultDateModified" class = "dateCreated"></div>
@@ -165,7 +165,7 @@
                 
            </script>
 
-            <h4>Projects contaning this Model:</h4>
+            <h4>Projects containing this model:</h4>
 
             <ol>
                 <li th:each = "projectModelsMap : ${modelProject}" >
@@ -175,9 +175,9 @@
                 </li>
             </ol>
 
-            <h4>Models Composite Structure:</h4>
+            <h4>Model's composite structure:</h4>
             <ul id = "modelChildren"></ul>
-            <button> <a href="/get/models">Select A Different Model</a> </button>
+            <button style="margin: 1em 0 3em"> <a href="/get/models" style="text-decoration: none; color: black">Select a Different Model</a> </button>
             
 
 

@@ -17,12 +17,12 @@
 <main>
     <div class = groupTitle>
         <h1 th:utext="${projectName}" ></h1>
-        <p> <em th:text="'Project ID:' + ${projectID}"></em></p>
+        <p> <em th:text="'Project ID: ' + ${projectID}"></em></p>
     </div>
     
     <p th:utext=" ${projectDescription}"> </p>
 
-    <h4>Project Members:</h4>
+    <h4>Project members:</h4>
 
     <ol>
         <li th:each = "projectMembersMap : ${projectMembers}" >
@@ -30,7 +30,7 @@
         </li>
     </ol>
 
-    <h4> Files</h4>
+    <h4> Files:</h4>
 
     
     <div id = "allFilesHolder"></div>
@@ -42,8 +42,8 @@
             <div class = "folderImage"> 
                 <svg aria-label="Directory"  height="16" viewBox="0 0 16 16" version="1.1" width="16" role="img"><path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path></svg>
             </div>
-            <div class= "fileContent">
-                Project Files
+            <div class="fileContent" style="color: blue; cursor: pointer">
+                Project files
             </div>
             <div id = "allFilesDateModified" class = "dateCreated"></div>
         </div>
@@ -57,7 +57,7 @@
         
    </script>
 
-    <h4>Project Models:</h4>
+    <h4>Project models:</h4>
 
     <ol>
         <li th:each = "projectModelsMap : ${projectModels}" >
@@ -69,6 +69,6 @@
     </ol>
 
     <p>Created <em th:text="${projectDate}"></em></p>
-    <button> <a href="/get/projects">Choose A Different Project</a> </button>
+    <button> <a href="/get/projects" style="text-decoration: none; color: black">Choose a Different Project</a> </button>
 </body>
 </html>

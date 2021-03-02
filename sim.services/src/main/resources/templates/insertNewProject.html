@@ -8,22 +8,22 @@
 <body>
     <div th:replace="header :: header"></div>
     <main>
-        <h1>Create A New Project</h1>
+        <h1>Create a New Project</h1>
         <p th:text="${greeting}"></p>
 
         <form action="#" th:action="@{/insert/project}" th:object="${insertNewProject}" method="post">
             <div class = "formTwoColumn">
                 <div class = "formElement">
-                    <label for="projectName">Project Name:</label>
+                    <label for="projectName">Project name:</label>
                     <input name = "projectName" type="text" th:field="*{projectName}" />
                 </div>
                 <div class = "formElement">
-                    <label for="projectDate">Start Date:</label>
+                    <label for="projectDate">Start date:</label>
                     <input name = "projectDate" type="date" th:field="*{creationDate}" />
                 </div>
             </div>
             <div class = "formElement">
-                <label for="projectDescription">Project Description:</label>
+                <label for="projectDescription">Project description:</label>
                 <textarea name = "projectDescription" type="text" rows="20"  th:field="*{projectDescription}"></textarea>
             </div>
             <div class = "formTwoColumn">

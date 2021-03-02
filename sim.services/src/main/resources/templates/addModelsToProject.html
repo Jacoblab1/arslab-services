@@ -10,7 +10,7 @@
     <main>
     <h1>Add Models to Project</h1>
    
-    <p> Current Models:
+    <p> Current models:
         <ol>
             <li th:each = "currentModelsMap : ${currentModels}" th:text = "${currentModelsMap.get('modelname')}  + ' (' + ${currentModelsMap.get('modelid')} + ')'"></li>
         </ol>
@@ -21,7 +21,7 @@
     <div id="formHolder" th:if="${projectID}">
             <form action="#" th:action="@{/insert/modelsToProject}" th:object="${addModelToProject}" method="post">
                 <div class = "formElement">
-                    <label for="selectModel">Select A Model:</label>
+                    <label for="selectModel">Select a model:</label>
                     <select name = "selectModel" th:field="*{modelId}">
                         <option th:value = "-1" th:text = "'Select Model'" selected> </option>
                         <option th:each="map : ${modelsMap}" th:value = "${map.get('modelid')}" th:text = "${map.get('modelname')}"> </option>   
