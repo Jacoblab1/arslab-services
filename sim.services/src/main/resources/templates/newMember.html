@@ -5,10 +5,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	<h1>Form: Create A New Member</h1>
+	<h1>Form: Create a New Member</h1>
     <form action="#" th:action="@{/newMember}" th:object="${newMember}" method="post">
-    	<p>Firstname: <input type="text" th:field="*{firstname}" /></p>
-        <p>Lastname: <input type="text" th:field="*{lastname}" /></p>
+    	<p>First name: <input type="text" th:field="*{firstname}" /></p>
+        <p>Last name: <input type="text" th:field="*{lastname}" /></p>
         <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
     </form>
 </body>

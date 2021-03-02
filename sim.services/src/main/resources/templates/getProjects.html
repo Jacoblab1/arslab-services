@@ -12,19 +12,19 @@
 <div th:replace="header :: header"></div>
    
 <main>
-	<h1>Select a Project To Discover</h1>
+	<h1>Select a Project to Discover</h1>
     <form action="#" th:action="@{/get/projects}" th:object="${getByIdObject}" method="post">       
         <div class = "formElement">
-            <label for="selectProject">Select A Project:</label>
-            <select name = "selectProject" th:field="*{id}">
+            <label for="selectProject">Select a project:</label>
+            <select name = "selectProject" th:field="*{id}" style="margin-top: 0.5em">
                 <option th:value = "-1" th:text = "'Select Project'" selected> </option>
                 <option th:each="map : ${projectsArrayList}" th:value = "${map.get('projectid')}" th:text = "${map.get('projectname')}"> </option>   
             </select>
         </div>
-        <div class = "formTwoColumn">     
+        <div class = "formTwoColumn" style="margin-top: 0.9em">     
             
             <input  type="submit" value="View Project"/>
-            Or 
+            or 
             <input th:name="add" type="submit" value="View All Models" />
         </div>  
     </form>
