@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import services.AccountsService;
 
-@CrossOrigin
 @RestController
 public class AccountsController {
 

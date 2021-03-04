@@ -61,7 +61,7 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
-		<!-- OpenAPI definitions and Swagger UI -->
+		<!-- OpenAPI Specification and Swagger UI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
