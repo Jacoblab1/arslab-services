@@ -20,4 +20,4 @@ File -> open Projects from File System
 7.	select Windows Preferences Maven and enable the Download repository index updates on startup option.
 8.	Restart eclipse
 9.	Setup maven dependencies
-![image](https://user-images.githubusercontent.com/25445362/109902857-00194b00-7c69-11eb-8f3d-86bb6cac6ca7.png)
+
