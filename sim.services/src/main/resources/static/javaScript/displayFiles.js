@@ -215,6 +215,7 @@ $(function(){
         $( '#fileTypeSelector' ).hide();
         $( '#simulationsHolder' ).hide();
         $('#iframe').hide();
+        $('#vizulizationHolder').hide();
         
     });
 
@@ -226,6 +227,7 @@ $(function(){
         $( '#fileTypeSelector' ).hide();
         $( '#simulationsHolder' ).hide();
         $('#iframe').hide();
+        $('#vizulizationHolder').hide();
     });
 
     $('#convertedSelector').click(function () {
@@ -236,6 +238,7 @@ $(function(){
         $( '#fileTypeSelector' ).hide();
         $( '#simulationsHolder' ).hide();
         $('#iframe').hide();
+        $('#vizulizationHolder').hide();
     });
 
     $('#resultSelector').click(function () {
@@ -246,6 +249,7 @@ $(function(){
         $( '#fileTypeSelector' ).hide();
         $( '#simulationsHolder' ).hide();
         $('#iframe').hide();
+        $('#vizulizationHolder').hide();
     });
 
     $('.backButton').click(function () {
@@ -256,6 +260,7 @@ $(function(){
         $( '#convertedFilesHolder' ).hide();
         $( '#fileTypeSelector' ).show();
         $('#iframe').hide(); 
+        $('#vizulizationHolder').hide();
     });  
 });
 

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
 
-    <link th:href="@{/css/main.css}" href="../static/css/main.css" type="text/css" rel="stylesheet">
+    
     <script async crossorigin="anonymous" type="module">
 
         import WDSV from 'http://206.12.94.204:8080/arslab-web/1.4/app-embed/WDSV.js';
@@ -25,6 +25,7 @@
             $("#vizulizationHolder").empty();
             var name = event.currentTarget.getAttribute('name');
             var node = document.body.querySelector('#vizulizationHolder');
+            console.log(name);
             var viewer = new WDSV(node, { id:name });
             
             viewer.On("Error", (event) => alert(event.error.toString()));
@@ -39,6 +40,7 @@
 
         
     </script>
+    <link th:href="@{/css/main.css}" href="../static/css/main.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
