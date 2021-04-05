@@ -66,8 +66,8 @@ public class FrontEndController implements WebMvcConfigurer {
 	
 	@Override
     public void addCorsMappings(CorsRegistry registry) {
-		//System.out.println("here");;
-       // registry.addMapping("/get/model/simulation/{id}").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
+		System.out.println("here");;
+        registry.addMapping("/get/model/simulation/{id}").allowedOrigins("*").allowedHeaders("*").allowedMethods("*");
     }
 	
 	@GetMapping("/get/model/simulation/{id}")
